@@ -48,35 +48,35 @@ The system is required to support the following workflow:
 
 ## Plan Of Action (POA)
 
--[] Remake The ER Diagram for this Particular Use Case
-    -[] Go through all of our assignment 2.
-    -[] Must include:
-        -[] External Participants
-        -[] Student
-        -[] Volunteers (Students can be volunteer)
-        -[] Organizer (Who are they? student?)
-        -[] Events
-        -[] Event winners
-        -[] Registration for events
-        -[] Student as Participant or Volunteer
--[] Decide Tech Stack
-    -[x] PostgreSQL
-    -[] ?
-    -[] ?
--[] Explore Triggers in Postgresql (in Parallel)
--[] Create Relational Schema
-    -[] Properly deciding the Constraints
-    -[] Note down each and every command in an SQL File, Need a final file to create the Database in One go
--[] Coding Phase
-    -[] Frontend
-        -[] Basic Frontend with full functionality
-        -[] Design phase
-    -[] Backend
-        -[] Follow MVC Architecture
-        -[] According to Requirements of Frontend, Create REST API
-    -[] Database Triggers
--[] Report
-    -[] Note each and every resource you are refering to when learning something
-    -[] All the design decisions must be written down to include in report
--[] Hosting
-    -[] This is a must, not that it will take much time, but we need to have a working model ready 1 day before
+- [ ] Remake The ER Diagram for this Particular Use Case
+    - [ ] Go through all of our assignment 2.
+    - [ ] Must include:
+        - [ ] External Participants
+        - [ ] Student
+        - [ ] Volunteers (Students can be volunteer)
+        - [ ] Organizer (Who are they? student?)
+        - [ ] Events
+        - [ ] Event winners
+        - [ ] Registration for events
+        - [ ] Student as Participant or Volunteer
+- [ ] Decide Tech Stack
+    - [x] PostgreSQL
+    - [ ] ?
+    - [ ] ?
+- [ ] Explore Triggers in Postgresql (in Parallel)
+- [ ] Create Relational Schema
+    - [ ] Properly deciding the Constraints
+    - [ ] Note down each and every command in an SQL File, Need a final file to create the Database in One go
+- [ ] Coding Phase
+    - [ ] Frontend
+        - [ ] Basic Frontend with full functionality
+        - [ ] Design phase
+    - [ ] Backend
+        - [ ] Follow MVC Architecture
+        - [ ] According to Requirements of Frontend, Create REST API
+    - [ ] Database Triggers
+- [ ] Report
+    - [ ] Note each and every resource you are refering to when learning something
+    - [ ] All the design decisions must be written down to include in report
+- [ ] Hosting
+    - [ ] This is a must, not that it will take much time, but we need to have a working model ready 1 day before

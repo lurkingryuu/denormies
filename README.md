@@ -16,19 +16,20 @@
 
 ### Statement
 
-Design a web application for a web-based system for managing a university cultural festival. You may use the schema designed in Assignment 2. You may use additional relations and attributes. 
+Design a web application for a web-based system for managing a university cultural festival. You may use the schema designed in Assignment 2. You may use additional relations and attributes.
 
-### Intended users 
+### Intended users
 
-1. External participant registrants 
-2. Student registrants 
-3. Volunteers 
-4. Organizers of events 
-5. Database Administrators: add/delete users 
+1. External participant registrants
+2. Student registrants
+3. Volunteers
+4. Organizers of events
+5. Database Administrators: add/delete users
 
 ### Functional Requirements
 
 The system is required to support the following workflow:
+
 1. External participants should be able to create an account and browse/search the events and schedules. They should also be able to register for particular events and know about the winners of the events in real-time. Access to logistics like accommodation and food should be provided through the same web application.
 2. Students should be able to browse/search the event schedules and register for the events. They should also be able to register as volunteers.
 3. Organizers should be able to create an account and browse the event details. They should also be able to view/search the volunteer and logistics details.
@@ -48,6 +49,11 @@ The system is required to support the following workflow:
 
 ## Plan Of Action (POA)
 
+::: info
+Note down every resource you are referring
+
+:::
+
 - [ ] Remake The ER Diagram for this Particular Use Case
     - [ ] Go through all of our assignment 2.
     - [ ] Must include:
@@ -59,24 +65,50 @@ The system is required to support the following workflow:
         - [ ] Event winners
         - [ ] Registration for events
         - [ ] Student as Participant or Volunteer
-- [ ] Decide Tech Stack
+- [x] Decide Tech Stack
     - [x] PostgreSQL
-    - [ ] ?
-    - [ ] ?
+    - [x] NextJS
+    - [x] FastAPI
 - [ ] Explore Triggers in Postgresql (in Parallel)
 - [ ] Create Relational Schema
     - [ ] Properly deciding the Constraints
-    - [ ] Note down each and every command in an SQL File, Need a final file to create the Database in One go
+    - [ ] Note down every command in an SQL File, Need a final file to create the Database in One go
 - [ ] Coding Phase
     - [ ] Frontend
         - [ ] Basic Frontend with full functionality
         - [ ] Design phase
     - [ ] Backend
         - [ ] Follow MVC Architecture
-        - [ ] According to Requirements of Frontend, Create REST API
+        - [ ] According to the Requirements of Frontend, Create REST API
     - [ ] Database Triggers
 - [ ] Report
-    - [ ] Note each and every resource you are refering to when learning something
-    - [ ] All the design decisions must be written down to include in report
+    - [ ] Note every resource you are referring to when learning something
+    - [ ] All the design decisions must be written down to include in the report
 - [ ] Hosting
     - [ ] This is a must, not that it will take much time, but we need to have a working model ready 1 day before
+
+---
+
+## Resources:
+
+- <https://github.com/rafsaf/minimal-fastapi-postgres-template/tree/main?tab=readme-ov-file>
+- <https://www.db-book.com/slides-dir/PDF-dir/ch9.pdf>
+- 
+
+---
+
+## Backend
+
+::: warning
+Do not panic after seeing the sheer amount of code, it is just a basic setup for the backend most of which is boilerplate code.
+:::
+
+### Important Files
+
+- [./backend/app/models.py](./backend/app/models.py) - Contains the Database Models using Pydantic
+- [./backend/app/schemas/](./backend/app/schemas/) - Contains the Pydantic Schemas for Request and Response
+- [./backend/app/core/config.py](./backend/app/core/config.py) - Contains the Configuration for the App, like Environment Variables, Allowed Hosts, etc.
+- [./backend/app/api/endpoints/](./backend/app/api/endpoints/) - Create a new file for every new set of endpoints you want to create
+- [./backend/app/api/api.py](./backend/app/api/api.py) - Contains the APIRouter, needs to be updated for every new endpoints file you create
+
+Go to [Guide](https://github.com/rafsaf/minimal-fastapi-postgres-template/tree/main?tab=readme-ov-file#minimal-async-fastapi--postgresql-template) To get an overview of setup and usage of this backend

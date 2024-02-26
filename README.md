@@ -49,10 +49,8 @@ The system is required to support the following workflow:
 
 ## Plan Of Action (POA)
 
-::: info
-Note down every resource you are referring
-
-:::
+> [!NOTE]
+> Note down every resource you are referring
 
 - [ ] Remake The ER Diagram for this Particular Use Case
     - [ ] Go through all of our assignment 2.
@@ -99,9 +97,8 @@ Note down every resource you are referring
 
 ## Backend
 
-::: warning
-Do not panic after seeing the sheer amount of code, it is just a basic setup for the backend most of which is boilerplate code.
-:::
+> [!WARNING]
+> Do not panic after seeing the sheer amount of code, it is just a basic setup for the backend most of which is boilerplate code.
 
 ### Important Files
 

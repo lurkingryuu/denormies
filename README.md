@@ -52,38 +52,39 @@ The system is required to support the following workflow:
 > [!NOTE]
 > Note down every resource you are referring
 
-- [ ] Remake The ER Diagram for this Particular Use Case
-    - [ ] Go through all of our assignment 2.
-    - [ ] Must include:
-        - [ ] External Participants
-        - [ ] Student
-        - [ ] Volunteers (Students can be volunteer)
-        - [ ] Organizer (Who are they? student?)
-        - [ ] Events
-        - [ ] Event winners
-        - [ ] Registration for events
-        - [ ] Student as Participant or Volunteer
+- [x] Remake The ER Diagram for this Particular Use Case
+  - [x] Go through all of our assignments 2.
+  - [x] Must include:
+    - [x] External Participants
+    - [x] Student
+    - [x] Volunteers (Students can be volunteers)
+    - [x] Organizer (not student)
+    - [x] Events
+    - [x] Event winners
+    - [x] Registration for events
+    - [x] Student as Participant or Volunteer
 - [x] Decide Tech Stack
-    - [x] PostgreSQL
-    - [x] NextJS
-    - [x] FastAPI
-- [ ] Explore Triggers in Postgresql (in Parallel)
+  - [x] PostgreSQL
+  - [x] NextJS
+  - [ ] Psycopg
+  - [ ] Fastapi or Flask
+- [x] Explore Triggers in Postgresql (in Parallel)
 - [ ] Create Relational Schema
-    - [ ] Properly deciding the Constraints
-    - [ ] Note down every command in an SQL File, Need a final file to create the Database in One go
+  - [ ] Properly deciding the Constraints
+  - [ ] Note down every command in an SQL File, Need a final file to create the Database in One go
 - [ ] Coding Phase
-    - [ ] Frontend
-        - [ ] Basic Frontend with full functionality
-        - [ ] Design phase
-    - [ ] Backend
-        - [ ] Follow MVC Architecture
-        - [ ] According to the Requirements of Frontend, Create REST API
-    - [ ] Database Triggers
+  - [ ] Frontend
+    - [ ] Basic Frontend with full functionality
+    - [ ] Design phase
+  - [ ] Backend
+    - [ ] Follow MVC Architecture
+    - [ ] According to the requirements of Frontend, Create REST API
+  - [ ] Database Triggers
 - [ ] Report
-    - [ ] Note every resource you are referring to when learning something
-    - [ ] All the design decisions must be written down to include in the report
+  - [ ] Not every resource you are referring to when learning something
+  - [ ] All the design decisions must be written down to include in the report
 - [ ] Hosting
-    - [ ] This is a must, not that it will take much time, but we need to have a working model ready 1 day before
+  - [ ] This is a must, not that it will take much time, but we need to have a working model ready 1 day before
 
 ---
 

@@ -1,7 +1,5 @@
 """Black-box security shortcuts to generate JWT tokens and password hashing and verifcation."""
 
-import time
-
 import jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
@@ -20,13 +18,13 @@ PWD_CONTEXT = CryptContext(
 
 
 class JWTTokenPayload(BaseModel):
-    sub: str | int
-    refresh: bool
-    issued_at: int
-    expires_at: int
+    """Pydantic model for JWT token payload"""
+
+    token: str
+    
 
 
-def create_jwt_token(subject: str | int, exp_secs: int, refresh: bool):
+def create_jwt_token(email: str, password: str):
     """Creates jwt access or refresh token for user.
 
     Args:
@@ -35,40 +33,13 @@ def create_jwt_token(subject: str | int, exp_secs: int, refresh: bool):
         refresh: if True, this is refresh token
     """
 
-    issued_at = int(time.time())
-    expires_at = issued_at + exp_secs
-
-    to_encode: dict[str, int | str | bool] = {
-        "issued_at": issued_at,
-        "expires_at": expires_at,
-        "sub": subject,
-        "refresh": refresh,
-    }
+    to_encode: dict[str, str] = {"email": email, "password": password}
     encoded_jwt = jwt.encode(
         to_encode,
         key=config.settings.SECRET_KEY,
         algorithm=JWT_ALGORITHM,
     )
-    return encoded_jwt, expires_at, issued_at
-
-
-def generate_access_token_response(subject: str | int):
-    """Generate tokens and return AccessTokenResponse"""
-    access_token, expires_at, issued_at = create_jwt_token(
-        subject, ACCESS_TOKEN_EXPIRE_SECS, refresh=False
-    )
-    refresh_token, refresh_expires_at, refresh_issued_at = create_jwt_token(
-        subject, REFRESH_TOKEN_EXPIRE_SECS, refresh=True
-    )
-    return AccessTokenResponse(
-        token_type="Bearer",
-        access_token=access_token,
-        expires_at=expires_at,
-        issued_at=issued_at,
-        refresh_token=refresh_token,
-        refresh_token_expires_at=refresh_expires_at,
-        refresh_token_issued_at=refresh_issued_at,
-    )
+    return encoded_jwt
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

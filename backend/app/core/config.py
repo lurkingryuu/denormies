@@ -99,5 +99,12 @@ class Settings(BaseSettings):
         env_file=f"{PROJECT_DIR}/.env", case_sensitive=True
     )
 
+    # def __init__(self, **data):
+    #     super().__init__(**data)
+
+    #     for k, v in self.model_dump().items():
+    #         if isinstance(v, str) and v.startswith("[") and v.endswith("]"):
+    #             setattr(self, k, eval(v))
+
 
 settings: Settings = Settings()  # type: ignore

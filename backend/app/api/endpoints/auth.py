@@ -10,40 +10,68 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api import deps
 from app.core import config, security
 from app.models import User
-from app.schemas.requests import RefreshTokenRequest
-from app.schemas.responses import AccessTokenResponse
+from app.schemas.requests import (
+    UserCreateRequest,
+)
+from app.schemas.requests import UserLoginRequest
+from app.schemas.responses import AccessTokenResponse, UserResponse
+from app.core.security import get_password_hash
+from app.core.security import create_jwt_token
 
 router = APIRouter()
 
 
-@router.post("/access-token", response_model=AccessTokenResponse)
-async def login_access_token(
-    session: AsyncSession = Depends(deps.get_session),
-    form_data: OAuth2PasswordRequestForm = Depends(),
-):
-    """OAuth2 compatible token, get an access token for future requests using username and password"""
-
-    result = await session.execute(select(User).where(User.email == form_data.username))
-    user = result.scalars().first()
-
-    if user is None:
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
-
-    if not security.verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
-
-    return security.generate_access_token_response(str(user.id))
-
-
-@router.post("/refresh-token", response_model=AccessTokenResponse)
-async def refresh_token(
-    input: RefreshTokenRequest,
+@router.post("/register", response_model=UserResponse)
+async def register_new_user(
+    new_user: UserCreateRequest,
     session: AsyncSession = Depends(deps.get_session),
 ):
-    """OAuth2 compatible token, get an access token for future requests using refresh token"""
+    """Create new user"""
+    result = await session.execute(select(User).where(User.email == new_user.email))
+    if result.scalars().first() is not None:
+        raise HTTPException(status_code=400, detail="Cannot use this email address")
+    user = User(
+        email=new_user.email,
+        password=get_password_hash(new_user.password),
+        phone=new_user.phone,
+        name=new_user.name,
+        role=new_user.role,
+    )
+    session.add(user)
+    await session.commit()
+    return {
+        "status": "success",
+        "token": security.create_jwt_token(new_user.email, new_user.password),
+    }
+
+
+@router.get("/login", response_model=UserResponse)
+async def login_user(
+    user: UserLoginRequest,
+    session: AsyncSession = Depends(deps.get_session),
+):
+    """Login user"""
+    result = await session.execute(select(User).where(User.email == user.email))
+    fetch_user = result.scalars().first()
+    if fetch_user is None:
+        raise HTTPException(status_code=400, detail="Incorrect email or password")
+    if not security.verify_password(user.password, fetch_user.password):
+        raise HTTPException(status_code=400, detail="Incorrect email or password")
+    return {
+        "status": "success",
+        "token": security.create_jwt_token(user.email, user.password),
+    }
+
+
+@router.get("/validate-token", response_model=UserResponse)
+async def validate_token(
+    token: str,
+    session: AsyncSession = Depends(deps.get_session),
+):
+    """Validate token"""
     try:
         payload = jwt.decode(
-            input.refresh_token,
+            token,
             config.settings.SECRET_KEY,
             algorithms=[security.JWT_ALGORITHM],
         )
@@ -56,11 +84,6 @@ async def refresh_token(
     # JWT guarantees payload will be unchanged (and thus valid), no errors here
     token_data = security.JWTTokenPayload(**payload)
 
-    if not token_data.refresh:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials, cannot use access token",
-        )
     now = int(time.time())
     if now < token_data.issued_at or now > token_data.expires_at:
         raise HTTPException(
@@ -68,10 +91,10 @@ async def refresh_token(
             detail="Could not validate credentials, token expired or not yet valid",
         )
 
-    result = await session.execute(select(User).where(User.id == token_data.sub))
+    result = await session.execute(select(User).where(User.email == token_data.email))
     user = result.scalars().first()
 
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return security.generate_access_token_response(str(user.id))
+    return {"status": "success", "token": token}

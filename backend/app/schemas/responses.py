@@ -16,5 +16,12 @@ class AccessTokenResponse(BaseResponse):
 
 
 class UserResponse(BaseResponse):
-    id: str
+    status: str
+    token: str
+
+
+class UserMeResponse(BaseResponse):
     email: EmailStr
+    phone: str
+    name: str
+    role: str

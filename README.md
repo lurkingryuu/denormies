@@ -110,3 +110,12 @@ The system is required to support the following workflow:
 - [./backend/app/api/api.py](./backend/app/api/api.py) - Contains the APIRouter, needs to be updated for every new endpoints file you create
 
 Go to [Guide](https://github.com/rafsaf/minimal-fastapi-postgres-template/tree/main?tab=readme-ov-file#minimal-async-fastapi--postgresql-template) To get an overview of setup and usage of this backend
+
+---
+## Frontend
+
+### Login - /auth
+![login](./assets/login.png)
+
+### Signup Page - /auth
+![signup](./assets/signup.png)

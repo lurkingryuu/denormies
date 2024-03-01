@@ -114,7 +114,6 @@ class Event(Base):
     date: Mapped[datetime.datetime] = mapped_column(nullable=False)
     duration: Mapped[datetime.timedelta] = mapped_column(nullable=False)
     venue: Mapped[str] = mapped_column(ForeignKey("venue.name"))
-    available: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
 class Registration(Base):

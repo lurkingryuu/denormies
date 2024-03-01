@@ -53,8 +53,8 @@ export function LoginForm() {
       .then((res) => res.json())
       .then((data) => {
         localStorage.setItem("token", data.token);
-        // Redirect to the profile page
-        window.location.href = "/profile";
+        // Redirect to the home page
+        window.location.href = "/";
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -70,7 +70,7 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <CardContent className="grid gap-4">
             <FormField
               control={form.control}
@@ -99,8 +99,13 @@ export function LoginForm() {
               )}
             />
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex justify-between">
             <Button type="submit">Log in</Button>
+            {/* <Button variant="secondary"
+              onClick={() => {
+                // change the 
+              }}
+            >Don&apos;t have an account?</Button> */}
           </CardFooter>
         </form>
       </Form>

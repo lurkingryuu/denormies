@@ -1,11 +1,22 @@
-import Link from "next/link"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Icons } from "@/components/icons"
-import { MainNav } from "@/components/main-nav"
-import { MobileNav } from "@/components/mobile-nav"
-import { ModeToggle } from "@/components/mode-toggle"
-import { buttonVariants } from "@/components/ui/button"
+import Link from "next/link";
+
+import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons";
+import { MainNav } from "@/components/main-nav";
+import { MobileNav } from "@/components/mobile-nav";
+import { ModeToggle } from "@/components/mode-toggle";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { siteConfig } from "@/config/sites";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ProfileDropdown } from "./dropdown-menu";
+import dynamic from "next/dynamic";
+
+const LoginOrProfile = dynamic(() => import("@/components/optional-login-button"), {
+  ssr: false,
+});
+
 
 export function SiteHeader() {
   return (
@@ -16,7 +27,7 @@ export function SiteHeader() {
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <nav className="flex items-center">
             <Link
-              href={"siteConfig.links.github"}
+              href={siteConfig.links.github}
               target="_blank"
               rel="noreferrer"
             >
@@ -32,27 +43,11 @@ export function SiteHeader() {
                 <span className="sr-only">GitHub</span>
               </div>
             </Link>
-            <Link
-              href={"siteConfig.links.twitter"}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div
-                className={cn(
-                  buttonVariants({
-                    variant: "ghost",
-                  }),
-                  "w-9 px-0"
-                )}
-              >
-                <Icons.twitter className="h-3 w-3 fill-current" />
-                <span className="sr-only">Twitter</span>
-              </div>
-            </Link>
             <ModeToggle />
+            <LoginOrProfile />
           </nav>
         </div>
       </div>
     </header>
-  )
+  );
 }

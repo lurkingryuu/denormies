@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-import { cn } from "@/lib/utils"
-import { Icons } from "@/components/icons"
+import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons";
 
 export function MainNav() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <div className="mr-4 hidden md:flex">
@@ -17,37 +17,40 @@ export function MainNav() {
       </Link>
       <nav className="flex items-center gap-6 text-sm">
         <Link
-          href="/docs"
+          href="/"
           className={cn(
             "transition-colors hover:text-foreground/80",
-            pathname === "/docs" ? "text-foreground" : "text-foreground/60"
+            pathname === "/" ? "text-foreground" : "text-foreground/60"
           )}
         >
-          Docs
+          <span className="sr-only">Home</span>
+          Home
         </Link>
         <Link
-          href="/docs/components"
+          href="/schedule"
           className={cn(
             "transition-colors hover:text-foreground/80",
-            pathname?.startsWith("/docs/components")
+            pathname?.startsWith("/#schedule")
               ? "text-foreground"
               : "text-foreground/60"
           )}
         >
-          Components
+          <span className="sr-only">Schedule</span>
+          Schedule
         </Link>
         <Link
-          href="/themes"
+          href="/events"
           className={cn(
             "transition-colors hover:text-foreground/80",
-            pathname?.startsWith("/themes")
+            pathname?.startsWith("/#events")
               ? "text-foreground"
               : "text-foreground/60"
           )}
         >
-          Themes
+          <span className="sr-only">Events</span>
+          Events
         </Link>
-        <Link
+        {/* <Link
           href="/examples"
           className={cn(
             "transition-colors hover:text-foreground/80",
@@ -57,16 +60,8 @@ export function MainNav() {
           )}
         >
           Examples
-        </Link>
-        <Link
-          href="#"
-          className={cn(
-            "hidden text-foreground/60 transition-colors hover:text-foreground/80 lg:block"
-          )}
-        >
-          GitHub
-        </Link>
+        </Link> */}
       </nav>
     </div>
-  )
+  );
 }

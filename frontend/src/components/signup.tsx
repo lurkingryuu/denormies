@@ -47,7 +47,7 @@ const formSchema: ZodType<FormSchema> = z
   .object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email(),
-    phone: z.string().min(10, "Phone number must be at least 10 characters"),
+    phone: z.string(),
     password: z.string().min(4, "Password must be at least 4 characters"),
     confirmPassword: z.string(),
     role: z.string(),
@@ -55,7 +55,12 @@ const formSchema: ZodType<FormSchema> = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"], // path of error
+  })
+  .refine((data) => data.phone === "" || data.phone.length === 10, {
+    message: "Phone number must be 10 digits",
+    path: ["phone"],
   });
+
 
 type Roles = {
   value: string;
@@ -113,8 +118,8 @@ export function SignupForm() {
       .then((res) => res.json())
       .then((data) => {
         localStorage.setItem("token", data.token);
-        // Redirect to the profile page
-        window.location.href = "/profile";
+        // Redirect to the home page
+        window.location.href = "/";
       })
       .catch((error) => {
         console.error("Error:", error);

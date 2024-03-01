@@ -28,7 +28,7 @@ export default function AuthenticationPage() {
         </div>
         <div className="m-auto mx-auto relative lg:p-8">
           <Tabs
-            defaultValue="signup"
+            defaultValue="login"
             className="w-[400px] items-center justify-center"
           >
             <TabsList className="grid w-full grid-cols-2">

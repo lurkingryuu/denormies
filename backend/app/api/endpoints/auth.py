@@ -45,7 +45,7 @@ async def register_new_user(
     }
 
 
-@router.get("/login", response_model=UserResponse)
+@router.post("/login", response_model=UserResponse)
 async def login_user(
     user: UserLoginRequest,
     session: AsyncSession = Depends(deps.get_session),
@@ -57,10 +57,7 @@ async def login_user(
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     if not security.verify_password(user.password, fetch_user.password):
         raise HTTPException(status_code=400, detail="Incorrect email or password")
-    return {
-        "status": "success",
-        "token": security.create_jwt_token(user.email, user.password),
-    }
+    return UserResponse(status="success", token=security.create_jwt_token(user.email, user.password))
 
 
 @router.get("/validate-token", response_model=UserResponse)

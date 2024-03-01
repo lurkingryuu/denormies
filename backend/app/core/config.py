@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     SECURITY_BCRYPT_ROUNDS: int = 12
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 11520  # 8 days
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 40320  # 28 days
-    BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
+    BACKEND_CORS_ORIGINS: list[str] = []
     ALLOWED_HOSTS: list[str] = ["localhost", "127.0.0.1"]
 
     # PROJECT NAME, VERSION AND DESCRIPTION
@@ -99,12 +99,13 @@ class Settings(BaseSettings):
         env_file=f"{PROJECT_DIR}/.env", case_sensitive=True
     )
 
-    # def __init__(self, **data):
-    #     super().__init__(**data)
+    def __init__(self, **data):
+        super().__init__(**data)
 
-    #     for k, v in self.model_dump().items():
-    #         if isinstance(v, str) and v.startswith("[") and v.endswith("]"):
-    #             setattr(self, k, eval(v))
+        print(self.model_dump()['BACKEND_CORS_ORIGINS'])
+        # for k, v in self.model_dump().items():
+        #     if isinstance(v, str) and v.startswith("[") and v.endswith("]"):
+        #         setattr(self, k, eval(v))
 
 
 settings: Settings = Settings()  # type: ignore

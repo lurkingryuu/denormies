@@ -39,8 +39,26 @@ export function LoginForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Logging in...");
-    console.log(values);
+    // Send the data to the backend
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: values.email,
+        password: values.password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        localStorage.setItem("token", data.token);
+        // Redirect to the profile page
+        window.location.href = "/profile";
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   }
 
   return (

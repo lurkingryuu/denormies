@@ -53,11 +53,12 @@ class Student(Base):
     dept: Mapped[str] = mapped_column(String(20), nullable=False)
 
 
-class Organizer(Base):
-    __tablename__ = "organizer"
-    id: Mapped[str] = mapped_column(ForeignKey("user.id"), primary_key=True)
-    position: Mapped[str] = mapped_column(String(20), nullable=False)
-    responsibility: Mapped[str] = mapped_column(String(100), nullable=False)
+# No need for organizer, as it can be handled by manage table
+# class Organizer(Base):
+#     __tablename__ = "organizer"
+#     id: Mapped[str] = mapped_column(ForeignKey("user.id"), primary_key=True)
+#     position: Mapped[str] = mapped_column(String(20), nullable=False)
+#     responsibility: Mapped[str] = mapped_column(String(100), nullable=False)
 
 
 class Accomodation(Base):
@@ -134,6 +135,8 @@ class Volunteer(Base):
 class Manage(Base):
     __tablename__ = "manage"
     id: Mapped[str] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    position: Mapped[str] = mapped_column(String(20), nullable=False)
+    responsibility: Mapped[str] = mapped_column(String(100), nullable=False)
     event_id: Mapped[str] = mapped_column(ForeignKey("event.id"), primary_key=True)
 
 

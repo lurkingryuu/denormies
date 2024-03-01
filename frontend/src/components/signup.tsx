@@ -115,10 +115,22 @@ export function SignupForm() {
         role: values.role,
       }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          res.json().then((data) => {
+            form.setError("email", {
+              type: "manual",
+              message: data.detail,
+            });
+          }
+          );
+          return Promise.reject();
+        }
+        return res.json();
+      }
+      )
       .then((data) => {
         localStorage.setItem("token", data.token);
-        // Redirect to the home page
         window.location.href = "/";
       })
       .catch((error) => {

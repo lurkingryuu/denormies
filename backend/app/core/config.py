@@ -99,10 +99,9 @@ class Settings(BaseSettings):
         env_file=f"{PROJECT_DIR}/.env", case_sensitive=True
     )
 
-    def __init__(self, **data):
-        super().__init__(**data)
+    # def __init__(self, **data):
+    #     super().__init__(**data)
 
-        print(self.model_dump()['BACKEND_CORS_ORIGINS'])
         # for k, v in self.model_dump().items():
         #     if isinstance(v, str) and v.startswith("[") and v.endswith("]"):
         #         setattr(self, k, eval(v))

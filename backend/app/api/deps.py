@@ -30,8 +30,6 @@ async def get_current_user(
         password: str = payload.get("password")
         result = await session.execute(select(User).where(User.email == email))
 
-        print(f"email: {email}")
-        print(f"password: {password}")
         # Password check
         user = result.scalars().first()
         if user is None:
@@ -54,4 +52,8 @@ async def get_current_user(
     except jwt.PyJWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unknown error: {e}"
         )

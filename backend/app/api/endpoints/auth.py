@@ -21,7 +21,7 @@ from app.core.security import create_jwt_token
 router = APIRouter()
 
 
-@router.post("/register", response_model=UserResponse)
+@router.post("/register", response_model=UserResponse, status_code=201)
 async def register_new_user(
     new_user: UserCreateRequest,
     session: AsyncSession = Depends(deps.get_session),
@@ -29,7 +29,7 @@ async def register_new_user(
     """Create new user"""
     result = await session.execute(select(User).where(User.email == new_user.email))
     if result.scalars().first() is not None:
-        raise HTTPException(status_code=400, detail="Cannot use this email address")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Email already registered")
     user = User(
         email=new_user.email,
         password=get_password_hash(new_user.password),
@@ -38,14 +38,13 @@ async def register_new_user(
         role=new_user.role,
     )
     session.add(user)
-    await session.commit()
-    return {
-        "status": "success",
-        "token": security.create_jwt_token(new_user.email, new_user.password),
-    }
+    ret = await session.commit()
+    if ret is not None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not create user")
+    return UserResponse(status="success", token=security.create_jwt_token(new_user.email, new_user.password))
 
 
-@router.post("/login", response_model=UserResponse)
+@router.post("/login", response_model=UserResponse, status_code=200)
 async def login_user(
     user: UserLoginRequest,
     session: AsyncSession = Depends(deps.get_session),
@@ -54,13 +53,13 @@ async def login_user(
     result = await session.execute(select(User).where(User.email == user.email))
     fetch_user = result.scalars().first()
     if fetch_user is None:
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     if not security.verify_password(user.password, fetch_user.password):
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid password")
     return UserResponse(status="success", token=security.create_jwt_token(user.email, user.password))
 
 
-@router.get("/validate-token", response_model=UserResponse)
+@router.get("/validate-token", response_model=UserResponse, status_code=200)
 async def validate_token(
     token: str,
     session: AsyncSession = Depends(deps.get_session),

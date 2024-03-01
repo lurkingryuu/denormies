@@ -50,14 +50,25 @@ export function LoginForm() {
         password: values.password,
       }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          res.json().then((data) => {
+            form.setError("email", {
+              type: "manual",
+              message: data.detail,
+            });
+          }
+          );
+          return Promise.reject("Invalid email or password");
+        }
+        return res.json();
+      })
       .then((data) => {
         localStorage.setItem("token", data.token);
-        // Redirect to the home page
         window.location.href = "/";
       })
       .catch((error) => {
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
   }
 

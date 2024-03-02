@@ -5,7 +5,6 @@ import path from "path"
 import { Metadata } from "next"
 import Image from "next/image"
 import { z } from "zod"
-
 import { columns } from "./components/columns"
 import { DataTable } from "./components/data-table"
 // import { UserNav } from "./components/user-nav"
@@ -54,7 +53,7 @@ export default async function TaskPage() {
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
             <p className="text-muted-foreground">
-              Here&apos;s a list of your tasks for this month!
+              Here&apos;s a list of the users currently on the system!
             </p>
           </div>
           <div className="flex items-center space-x-2">

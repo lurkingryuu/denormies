@@ -29,10 +29,10 @@ async def read_current_user(
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return UserMeResponse(
-        email=user.email, 
+        email=user.email,
         phone=user.phone if user.phone else "",
-        name=user.name, 
-        role=user.role
+        name=user.name,
+        role=user.role,
     )
 
 
@@ -88,9 +88,10 @@ async def list_users(
             continue
         all_users.append(
             UserMeResponse(
-                email=user.email, 
+                email=user.email,
                 phone=user.phone if user.phone else "",
-                name=user.name, role=user.role
+                name=user.name,
+                role=user.role,
             )
         )
     return UserListResponse(users=all_users)
@@ -113,10 +114,10 @@ async def get_user(
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return UserMeResponse(
-        email=user.email, 
+        email=user.email,
         phone=user.phone if user.phone else "",
-        name=user.name, 
-        role=user.role
+        name=user.name,
+        role=user.role,
     )
 
 
@@ -147,13 +148,13 @@ async def create_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
         )
-    
+
     result = await session.execute(select(User).where(User.email == user.email))
     if result.scalars().first() is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
         )
-    
+
     new_user = User(
         email=user.email,
         password=get_password_hash(user.password),
@@ -193,8 +194,8 @@ async def update_user(
     user.role = new_user.role if new_user.role else user.role
     await session.commit()
     return UserMeResponse(
-        email=user.email, 
+        email=user.email,
         phone=user.phone if user.phone else "",
-        name=user.name, 
-        role=user.role
+        name=user.name,
+        role=user.role,
     )

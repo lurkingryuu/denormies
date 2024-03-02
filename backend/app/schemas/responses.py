@@ -2,6 +2,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import List
 import datetime
 
+
 class BaseResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -28,8 +29,10 @@ class UserMeResponse(BaseResponse):
     name: str
     role: str
 
+
 class UserListResponse(BaseResponse):
     users: List[UserMeResponse]
+
 
 # ----------------- Events -----------------
 class EventSchema(BaseResponse):
@@ -40,6 +43,7 @@ class EventSchema(BaseResponse):
     date: datetime.datetime
     duration: datetime.timedelta
     venue: str
+
 
 class MiniEventSchema(BaseResponse):
     id: str
@@ -53,11 +57,13 @@ class EventListResponse(BaseResponse):
 
 
 # ----------------- Schedule -----------------
-    
+
+
 # ----------------- Student -----------------
 class StudentResponse(BaseResponse):
     roll: str
     dept: str
+
 
 class StudentVolunteerResponse(BaseResponse):
     name: str

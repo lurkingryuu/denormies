@@ -33,6 +33,7 @@ class UserChangeRequest(BaseRequest):
     name: Optional[str] = None
     role: Optional[str] = None
 
+
 class UserLoginRequest(BaseRequest):
     email: EmailStr
     password: str
@@ -46,6 +47,7 @@ class BaseUser(BaseModel):
     password: str
     name: str
 
+
 # ----------------- Students -----------------
 class StudentCreateRequest(BaseRequest):
     roll: str
@@ -55,6 +57,7 @@ class StudentCreateRequest(BaseRequest):
 class StudentVolunteerRequest(BaseRequest):
     event_id: str
 
+
 # ----------------- Events -----------------
 class EventCreateRequest(BaseRequest):
     name: str
@@ -63,6 +66,7 @@ class EventCreateRequest(BaseRequest):
     date: datetime.datetime
     duration: datetime.timedelta
     venue: str
+
 
 class EventChangeRequest(BaseRequest):
     name: Optional[str] = None

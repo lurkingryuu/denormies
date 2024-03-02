@@ -74,11 +74,16 @@ async def read_volunteers(
         .filter(Volunteer.event_id == event_id)
     )
     volunteers_for_event = volunteers_for_event.scalars().all()
-    if current_user.role != "admin" and (
-        current_user.role != "organizer"
-        or current_user.id not in [organizer.id for organizer in organizers]) and (
+    if (
+        current_user.role != "admin"
+        and (
+            current_user.role != "organizer"
+            or current_user.id not in [organizer.id for organizer in organizers]
+        )
+        and (
             current_user.id not in [volunteer.id for volunteer in volunteers_for_event]
-        ):
+        )
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
         )

@@ -34,6 +34,8 @@ type ProfileFormValues = Optional<{
   dept: string;
   university: string;
   roll: string;
+  accomodation: string;
+  mess: string;
 }>;
 
 export default function Profile() {
@@ -73,6 +75,8 @@ export default function Profile() {
               university: data.university,
               dept: undefined,
               roll: undefined,
+              accomodation: data.accomodation,
+              mess: data.mess,
             })
           );
         });
@@ -92,6 +96,8 @@ export default function Profile() {
               dept: data.dept, 
               roll: data.roll,
               university: undefined,
+              accomodation: undefined,
+              mess: undefined,
             })
           );
         });
@@ -111,7 +117,7 @@ export default function Profile() {
         >
           <div>
             <CardTitle>Profile</CardTitle>
-            <CardDescription>This is your profile.</CardDescription>
+            <CardDescription>Relevant Details</CardDescription>
           </div>
           <Avatar className="ml-2 w-12 h-12">
             <AvatarImage src="https://github.com/shadcn.png" alt="@denormies" />
@@ -183,6 +189,28 @@ export default function Profile() {
                     id="university"
                     placeholder="University"
                     defaultValue={values.university}
+                    disabled
+                  />
+                </div>
+              )}
+              {values.accomodation && (
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="accomodation">Accomodation</Label>
+                  <Input
+                    id="accomodation"
+                    placeholder="Accomodation"
+                    defaultValue={values.accomodation}
+                    disabled
+                  />
+                </div>
+              )}
+              {values.mess && (
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="mess">Mess</Label>
+                  <Input
+                    id="mess"
+                    placeholder="Mess"
+                    defaultValue={values.mess}
                     disabled
                   />
                 </div>

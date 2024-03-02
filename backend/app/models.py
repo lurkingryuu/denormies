@@ -46,12 +46,12 @@ class User(Base):
 
 class Student(Base):
     __tablename__ = "student"
-    id: Mapped[str] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    id: Mapped[str] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), primary_key=True)
     roll: Mapped[str] = mapped_column(
         String(20), nullable=False, unique=True, index=True
     )
     dept: Mapped[str] = mapped_column(String(20), nullable=False)
-
+    
 
 class Accomodation(Base):
     __tablename__ = "accomodation"
@@ -79,10 +79,10 @@ class Mess(Base):
 
 class Participant(Base):
     __tablename__ = "participant"
-    id: Mapped[str] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    id: Mapped[str] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), primary_key=True)
     university: Mapped[str] = mapped_column(String(100), nullable=False)
-    accomodation: Mapped[str] = mapped_column(ForeignKey("accomodation.id"))
-    mess: Mapped[str] = mapped_column(ForeignKey("mess.id"))
+    accomodation: Mapped[str] = mapped_column(ForeignKey("accomodation.id",ondelete="SET NULL"))
+    mess: Mapped[str] = mapped_column(ForeignKey("mess.id", ondelete="SET NULL"))
 
 
 class Venue(Base):
@@ -106,13 +106,13 @@ class Event(Base):
     desc: Mapped[str] = mapped_column(String(100))
     date: Mapped[datetime.datetime] = mapped_column(nullable=False)
     duration: Mapped[datetime.timedelta] = mapped_column(nullable=False)
-    venue: Mapped[str] = mapped_column(ForeignKey("venue.name"))
+    venue: Mapped[str] = mapped_column(ForeignKey("venue.name", ondelete="SET NULL"))
 
 
 class Registration(Base):
     __tablename__ = "registration"
-    event_id: Mapped[str] = mapped_column(ForeignKey("event.id"), primary_key=True)
-    user_id: Mapped[str] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    event_id: Mapped[str] = mapped_column(ForeignKey("event.id", ondelete="CASCADe"), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), primary_key=True)
     reg_time: Mapped[datetime.datetime] = mapped_column(
         nullable=False, default=datetime.datetime.now
     )
@@ -120,30 +120,30 @@ class Registration(Base):
 
 class Volunteer(Base):
     __tablename__ = "volunteer"
-    id: Mapped[str] = mapped_column(ForeignKey("user.id"), primary_key=True)
-    event_id: Mapped[str] = mapped_column(ForeignKey("event.id"), primary_key=True)
+    id: Mapped[str] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), primary_key=True)
+    event_id: Mapped[str] = mapped_column(ForeignKey("event.id", ondelete="CASCADE"), primary_key=True)
 
 
 class Manage(Base):
     __tablename__ = "manage"
-    id: Mapped[str] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    id: Mapped[str] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), primary_key=True)
     position: Mapped[str] = mapped_column(String(20), nullable=False)
     responsibility: Mapped[str] = mapped_column(String(100), nullable=False)
-    event_id: Mapped[str] = mapped_column(ForeignKey("event.id"), primary_key=True)
+    event_id: Mapped[str] = mapped_column(ForeignKey("event.id", ondelete="CASCADE"), primary_key=True)
 
 
 class Competition(Base):
     __tablename__ = "competition"
-    id: Mapped[str] = mapped_column(ForeignKey("event.id"), primary_key=True)
+    id: Mapped[str] = mapped_column(ForeignKey("event.id", ondelete="CASCADE"), primary_key=True)
     props: Mapped[str] = mapped_column(String(100), nullable=False)
 
 
 class Prize(Base):
     __tablename__ = "prize"
-    event_id: Mapped[str] = mapped_column(ForeignKey("event.id"), primary_key=True)
+    event_id: Mapped[str] = mapped_column(ForeignKey("event.id", ondelete="CASCADE"), primary_key=True)
     position: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     amount: Mapped[int] = mapped_column(Integer, nullable=False)
-    user_id: Mapped[str] = mapped_column(ForeignKey("user.id"))
+    user_id: Mapped[str] = mapped_column(ForeignKey("user.id", ondelete="SET NULL"))
 
 
 class Sponsor(Base):
@@ -159,6 +159,6 @@ class Sponsor(Base):
 
 class Sponsorship(Base):
     __tablename__ = "sponsorship"
-    sponsor_id: Mapped[str] = mapped_column(ForeignKey("sponsor.id"), primary_key=True)
-    event_id: Mapped[str] = mapped_column(ForeignKey("event.id"), primary_key=True)
+    sponsor_id: Mapped[str] = mapped_column(ForeignKey("sponsor.id", ondelete="CASCADE"), primary_key=True)
+    event_id: Mapped[str] = mapped_column(ForeignKey("event.id", ondelete="CASCADE"), primary_key=True)
     amount: Mapped[int] = mapped_column(Integer, nullable=False)

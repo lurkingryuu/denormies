@@ -2,7 +2,9 @@
 
 import { EventItem } from "@/components/event-item";
 import EventPic from "@/images/animal-after.webp";
-import { DrawerDialogDemo } from "./wrapper";
+const DrawerDialogDemo = dynamic(() => import("./wrapper"), {
+  ssr: false,
+});
 
 
 export interface Event {
@@ -28,7 +30,7 @@ const EventList: Event[] = [
   {
     id: "2",
     name: "Event 2",
-    date: new Date("2022-02-02"),
+    date: new Date("2022-02-2"),
     venue: "Venue 2",
     type: "Type 2",
     desc: "Description 2",
@@ -36,7 +38,7 @@ const EventList: Event[] = [
   {
     id: "3",
     name: "Event 3",
-    date: new Date("2022-03-03"),
+    date: new Date("2022-3-3"),
     venue: "Venue 3",
     type: "Type 3",
     desc: "Description 3",
@@ -44,7 +46,7 @@ const EventList: Event[] = [
   {
     id: "4",
     name: "Event 4",
-    date: new Date("2022-04-04"),
+    date: new Date("2022-4-4"),
     venue: "Venue 4",
     type: "Type 4",
     desc: "Description 4",
@@ -52,7 +54,7 @@ const EventList: Event[] = [
   {
     id: "5",
     name: "Event 5",
-    date: new Date("2022-05-05"),
+    date: new Date("2022-5-5"),
     venue: "Venue 5",
     type: "Type 5",
     desc: "Description 5",
@@ -60,7 +62,7 @@ const EventList: Event[] = [
   {
     id: "6",
     name: "Event 6",
-    date: new Date("2022-06-06"),
+    date: new Date("2022-6-6"),
     venue: "Venue 6",
     type: "Type 6",
     desc: "Description 6",
@@ -68,7 +70,7 @@ const EventList: Event[] = [
   {
     id: "7",
     name: "Event 7",
-    date: new Date("2022-07-07"),
+    date: new Date("2022-7-7"),
     venue: "Venue 7",
     type: "Type 7",
     desc: "Description 7",
@@ -76,7 +78,7 @@ const EventList: Event[] = [
   {
     id: "8",
     name: "Event 8",
-    date: new Date("2022-08-08"),
+    date: new Date("2022-8-8"),
     venue: "Venue 8",
     type: "Type 8",
     desc: "Description 8",
@@ -84,7 +86,7 @@ const EventList: Event[] = [
   {
     id: "9",
     name: "Event 9",
-    date: new Date("2022-09-09"),
+    date: new Date("2022-9-9"),
     venue: "Venue 9",
     type: "Type 9",
     desc: "Description 9",
@@ -103,6 +105,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import dynamic from "next/dynamic";
 
 export default function CarouselPlugin() {
   const plugin = React.useRef(

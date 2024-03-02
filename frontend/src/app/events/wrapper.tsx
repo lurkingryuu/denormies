@@ -33,7 +33,7 @@ export interface Event {
   desc: string;
 }
 
-export function DrawerDialogDemo({ event }: { event: Event }) {
+export default function DrawerDialogDemo({ event }: { event: Event }) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 

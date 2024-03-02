@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import deps
-from app.models import Event
+from app.models import Event, Participant, User, Registration
 from app.schemas.responses import EventListResponse, MiniEventSchema, List, EventSchema
 from app.schemas.requests import EventChangeRequest, BaseUser
 
@@ -11,7 +11,7 @@ from app.schemas.requests import EventChangeRequest, BaseUser
 router = APIRouter()
 
 
-@router.get("/all", response_model=EventListResponse, status_code=200)
+@router.get("/all", response_model=EventListResponse, status_code=status.HTTP_200_OK)
 async def list_events(
     current_user: BaseUser = Depends(deps.get_current_user),
     session: AsyncSession = Depends(deps.get_session),
@@ -30,7 +30,7 @@ async def list_events(
     return EventListResponse(events=all_events)
 
 
-@router.get("/:id", response_model=EventSchema, status_code=200)
+@router.get("/:id", response_model=EventSchema, status_code=status.HTTP_200_OK)
 async def get_event(
     id: str,
     current_user: BaseUser = Depends(deps.get_current_user),
@@ -50,6 +50,43 @@ async def get_event(
         time=event.time,
         venue=event.venue,
     )
+
+
+@router.put("/register", status_code=status.HTTP_204_NO_CONTENT)
+async def read_students(
+    event_id: str,
+    current_user: BaseUser = Depends(deps.get_current_user),
+    session: AsyncSession = Depends(deps.get_session),
+):
+    """Register for an event"""
+    if current_user.role != "participant" and current_user.role != "student":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Not a participant"
+        )
+
+    event = await session.execute(select(Event).filter(Event.id == event_id))
+    event = event.scalar_one()
+    if event is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        )
+
+    existing_registration = await session.execute(
+        select(Registration).filter(
+            Registration.event_id == event_id, Registration.user_id == current_user.id
+        )
+    )
+    existing_registration = existing_registration.scalar_one()
+    if existing_registration is not None:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Already registered"
+        )
+
+    registration = Registration(event_id=event_id, user_id=current_user.id)
+    session.add(registration)
+    await session.commit()
+    return
+
 
 # ----------------------------- Restricted -----------------------------
 @router.post("/", response_model=EventSchema, status_code=201)
@@ -75,7 +112,7 @@ async def create_event(
     return new_event
 
 
-@router.put("/:id", response_model=EventSchema, status_code=200)
+@router.put("/:id", response_model=EventSchema, status_code=status.HTTP_200_OK)
 async def update_event(
     id: str,
     new_event: EventChangeRequest,

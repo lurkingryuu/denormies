@@ -25,7 +25,7 @@ services:
       context: ./frontend/
       dockerfile: Dockerfile
     ports:
-      - '3000:3000'
+      - '7069:3000'
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_BACKEND_URL=${BACKEND_URL}
@@ -42,7 +42,7 @@ services:
       - DEFAULT_DATABASE_HOSTNAME=postgres
       - DEFAULT_DATABASE_PORT=5432
     ports:
-      - 6969:8000
+      - 7420:8000
   
 volumes:
   postgres_data:

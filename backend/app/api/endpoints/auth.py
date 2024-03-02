@@ -38,9 +38,6 @@ async def register_new_user(
         role=new_user.role,
     )
     session.add(user)
-    ret = await session.commit()
-    if ret is not None:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not create user")
     return UserResponse(status="success", token=security.create_jwt_token(new_user.email, new_user.password))
 
 

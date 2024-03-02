@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
-
+from typing import List
+import datetime
 
 class BaseResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -15,6 +16,7 @@ class AccessTokenResponse(BaseResponse):
     refresh_token_issued_at: int
 
 
+# ----------------- Users -----------------
 class UserResponse(BaseResponse):
     status: str
     token: str
@@ -25,3 +27,29 @@ class UserMeResponse(BaseResponse):
     phone: str
     name: str
     role: str
+
+class UserListResponse(BaseResponse):
+    users: List[UserMeResponse]
+
+# ----------------- Events -----------------
+class EventSchema(BaseResponse):
+    id: str
+    name: str
+    type: str
+    desc: str
+    date: datetime.datetime
+    duration: datetime.timedelta
+    venue: str
+
+class MiniEventSchema(BaseResponse):
+    id: str
+    name: str
+    type: str
+    date: datetime.datetime
+
+
+class EventListResponse(BaseResponse):
+    events: List[MiniEventSchema]
+
+
+# ----------------- Schedule -----------------

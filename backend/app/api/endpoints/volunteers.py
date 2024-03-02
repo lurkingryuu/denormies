@@ -53,7 +53,7 @@ async def volunteer_student(
 
 # ----------------- Admin -----------------
 @router.get(
-    "/all/:event_id",
+    "/all/{event_id}",
     response_model=List[StudentVolunteerResponse],
     status_code=status.HTTP_200_OK,
 )

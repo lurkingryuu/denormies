@@ -30,7 +30,7 @@ export function MainNav() {
           href="/schedule"
           className={cn(
             "transition-colors hover:text-foreground/80",
-            pathname?.startsWith("/#schedule")
+            pathname?.startsWith("/schedule")
               ? "text-foreground"
               : "text-foreground/60"
           )}
@@ -42,7 +42,7 @@ export function MainNav() {
           href="/events"
           className={cn(
             "transition-colors hover:text-foreground/80",
-            pathname?.startsWith("/#events")
+            pathname?.startsWith("/events")
               ? "text-foreground"
               : "text-foreground/60"
           )}

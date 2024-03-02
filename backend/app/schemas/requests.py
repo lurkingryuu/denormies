@@ -78,6 +78,9 @@ class EventChangeRequest(BaseRequest):
 
 
 # ----------------- Schedule -----------------
+class ScheduleRequest(BaseRequest):
+    date: str
+
 # ----------------- Student -----------------
 # ----------------- Participant -----------------
 class ParticipantCreateRequest(BaseRequest):

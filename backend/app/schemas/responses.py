@@ -57,7 +57,10 @@ class EventListResponse(BaseResponse):
 
 
 # ----------------- Schedule -----------------
-
+class ScheduleResponse(BaseResponse):
+    name: str
+    start_time: str
+    venue: str
 
 # ----------------- Student -----------------
 class StudentResponse(BaseResponse):

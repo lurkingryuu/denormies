@@ -97,7 +97,7 @@ async def list_users(
     return UserListResponse(users=all_users)
 
 
-@router.get("/:id", response_model=UserMeResponse, status_code=status.HTTP_200_OK)
+@router.get("/{id}", response_model=UserMeResponse, status_code=status.HTTP_200_OK)
 async def get_user(
     id: str,
     current_user: BaseUser = Depends(deps.get_current_user),
@@ -121,7 +121,7 @@ async def get_user(
     )
 
 
-@router.delete("/:id", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(
     id: str,
     current_user: BaseUser = Depends(deps.get_current_user),
@@ -172,7 +172,7 @@ async def create_user(
     )
 
 
-@router.put("/:id", response_model=UserMeResponse, status_code=status.HTTP_200_OK)
+@router.put("/{id}", response_model=UserMeResponse, status_code=status.HTTP_200_OK)
 async def update_user(
     id: str,
     new_user: UserChangeRequest,

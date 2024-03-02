@@ -30,7 +30,7 @@ async def list_events(
     return EventListResponse(events=all_events)
 
 
-@router.get("/:id", response_model=EventSchema, status_code=status.HTTP_200_OK)
+@router.get("/{id}", response_model=EventSchema, status_code=status.HTTP_200_OK)
 async def get_event(
     id: str,
     current_user: BaseUser = Depends(deps.get_current_user),
@@ -112,7 +112,7 @@ async def create_event(
     return new_event
 
 
-@router.put("/:id", response_model=EventSchema, status_code=status.HTTP_200_OK)
+@router.put("/{id}", response_model=EventSchema, status_code=status.HTTP_200_OK)
 async def update_event(
     id: str,
     new_event: EventChangeRequest,

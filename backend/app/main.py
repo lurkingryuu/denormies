@@ -25,5 +25,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Guards against HTTP Host Header attacks
+# # Guards against HTTP Host Header attacks
 # app.add_middleware(TrustedHostMiddleware, allowed_hosts=config.settings.ALLOWED_HOSTS)

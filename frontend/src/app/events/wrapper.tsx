@@ -24,7 +24,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function DrawerDialogDemo() {
+export interface Event {
+  name: string;
+  date: Date;
+  venue: string;
+  type: string;
+}
+
+export function DrawerDialogDemo({ event }: { event: Event }) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -33,11 +40,11 @@ export function DrawerDialogDemo() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           {/* <Button variant="outline"> */}
-            <Card>
-              <CardContent className="flex aspect-square items-center justify-center p-6">
-                <span className="text-4xl font-semibold">hey</span>
-              </CardContent>
-            </Card>
+          <Card>
+            <CardContent className="flex aspect-square items-center justify-center p-6">
+              <span className="text-4xl font-semibold">hey</span>
+            </CardContent>
+          </Card>
           {/* </Button> */}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">

@@ -25,10 +25,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export interface Event {
+  id: string;
   name: string;
   date: Date;
   venue: string;
   type: string;
+  desc: string;
 }
 
 export function DrawerDialogDemo({ event }: { event: Event }) {
@@ -42,19 +44,49 @@ export function DrawerDialogDemo({ event }: { event: Event }) {
           {/* <Button variant="outline"> */}
           <Card>
             <CardContent className="flex aspect-square items-center justify-center p-6">
-              <span className="text-4xl font-semibold">hey</span>
+              <span className="text-4xl font-semibold">
+                <div className="text-center">
+                  {/* Move event information to the lower half of the card */}
+                  <div className="mb-2">
+                    <h2 className="text-4xl font-semibold">{event.name}</h2>
+                  </div>
+                  <div className="text-gray-600 mb-2">
+                    Date: {event.date.toLocaleDateString()}
+                  </div>
+                  <div className="text-gray-600 mb-2">Venue: {event.venue}</div>
+                  <div className="text-gray-600 mb-2">{event.type}</div>
+                </div>
+              </span>
             </CardContent>
           </Card>
           {/* </Button> */}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
-            </DialogDescription>
+            <DialogTitle>{event.name}</DialogTitle>
+            <DialogDescription>{event.desc}</DialogDescription>
           </DialogHeader>
-          <ProfileForm />
+          <form className="grid items-start gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">
+                Date: {event.date.toLocaleDateString()}
+              </Label>
+              {/* <Input
+                type="email"
+                id="email"
+                defaultValue="shadcn@example.com"
+              /> */}
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="username">Venue: {event.venue}</Label>
+              {/* <Input id="username" defaultValue="@shadcn" /> */}
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="username">Type: {event.type}</Label>
+              {/* <Input id="username" defaultValue="@shadcn" /> */}
+            </div>
+            <Button type="submit">Ok</Button>
+          </form>
         </DialogContent>
       </Dialog>
     );
@@ -63,21 +95,53 @@ export function DrawerDialogDemo({ event }: { event: Event }) {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
+        {/* <Button variant="outline">Edit Profile</Button>
+         */}
+        <Card>
+          <CardContent className="flex aspect-square items-center justify-center p-6">
+            <span className="text-4xl font-semibold">
+              <div className="text-center">
+                {/* Move event information to the lower half of the card */}
+                <div className="mb-2">
+                  <h2 className="text-4xl font-semibold">{event.name}</h2>
+                </div>
+                <div className="text-gray-600 mb-2">
+                  Date: {event.date.toLocaleDateString()}
+                </div>
+                <div className="text-gray-600 mb-2">Venue: {event.venue}</div>
+                <div className="text-gray-600 mb-2">{event.type}</div>
+              </div>
+            </span>
+          </CardContent>
+        </Card>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Edit profile</DrawerTitle>
-          <DrawerDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DrawerDescription>
+          <DrawerTitle>{event.name}</DrawerTitle>
+          <DrawerDescription>{event.desc}</DrawerDescription>
         </DrawerHeader>
-        <ProfileForm className="px-4" />
-        <DrawerFooter className="pt-2">
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
+        {/* <ProfileForm className="px-4" /> */}
+        <form className="px-4 grid items-start gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="email">
+              Date: {event.date.toLocaleDateString()}
+            </Label>
+            {/* <Input
+                type="email"
+                id="email"
+                defaultValue="shadcn@example.com"
+              /> */}
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="username">Venue: {event.venue}</Label>
+            {/* <Input id="username" defaultValue="@shadcn" /> */}
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="username">Type: {event.type}</Label>
+            {/* <Input id="username" defaultValue="@shadcn" /> */}
+          </div>
+          <Button type="submit">Ok</Button>
+        </form>
       </DrawerContent>
     </Drawer>
   );

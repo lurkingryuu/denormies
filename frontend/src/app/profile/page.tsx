@@ -58,7 +58,7 @@ export default function Profile() {
     }
   }, []);
 
-  React.useEffect(() => {
+  function getProfile(role: string) {
     if (role === "participant") {
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/participants/me`, {
         headers: {
@@ -67,7 +67,14 @@ export default function Profile() {
       })
         .then((res) => res.json())
         .then((data) => {
-          setValues({ ...values, university: data.university });
+          setValues(
+            values => ({ 
+              ...values, 
+              university: data.university,
+              dept: undefined,
+              roll: undefined,
+            })
+          );
         });
     }
 
@@ -79,10 +86,21 @@ export default function Profile() {
       })
         .then((res) => res.json())
         .then((data) => {
-          setValues({ ...values, dept: data.dept, roll: data.roll });
+          setValues(
+            values => ({
+              ...values, 
+              dept: data.dept, 
+              roll: data.roll,
+              university: undefined,
+            })
+          );
         });
     }
-  }, [role, values]);
+  }
+
+  React.useEffect(() => {
+    getProfile(role);
+  }, [role]);
 
   return (
     <main className="flex items-center justify-center h-screen">

@@ -40,7 +40,7 @@ export function LoginForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Send the data to the backend
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login/`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -73,4 +73,3 @@ class ParticipantResponse(BaseResponse):
     university: str
     accomodation: str
     mess: str
-

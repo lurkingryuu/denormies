@@ -53,3 +53,24 @@ class EventListResponse(BaseResponse):
 
 
 # ----------------- Schedule -----------------
+    
+# ----------------- Student -----------------
+class StudentResponse(BaseResponse):
+    roll: str
+    dept: str
+
+class StudentVolunteerResponse(BaseResponse):
+    name: str
+    roll: str
+    dept: str
+
+
+# ----------------- Participant -----------------
+class ParticipantResponse(BaseResponse):
+    name: str
+    email: EmailStr
+    phone: str
+    university: str
+    accomodation: str
+    mess: str
+

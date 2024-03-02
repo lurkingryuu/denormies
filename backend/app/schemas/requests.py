@@ -8,6 +8,7 @@ class BaseRequest(BaseModel):
     pass
 
 
+# ----------------- Users -----------------
 class UserUpdatePasswordRequest(BaseRequest):
     password: str
 
@@ -45,6 +46,15 @@ class BaseUser(BaseModel):
     password: str
     name: str
 
+# ----------------- Students -----------------
+class StudentCreateRequest(BaseRequest):
+    roll: str
+    dept: str
+
+
+class StudentVolunteerRequest(BaseRequest):
+    event_id: str
+
 # ----------------- Events -----------------
 class EventCreateRequest(BaseRequest):
     name: str
@@ -61,3 +71,10 @@ class EventChangeRequest(BaseRequest):
     date: Optional[datetime.datetime] = None
     duration: Optional[datetime.timedelta] = None
     venue: Optional[str] = None
+
+
+# ----------------- Schedule -----------------
+# ----------------- Student -----------------
+# ----------------- Participant -----------------
+class ParticipantCreateRequest(BaseRequest):
+    university: str

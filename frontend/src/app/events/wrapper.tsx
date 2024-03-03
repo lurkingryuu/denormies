@@ -143,8 +143,8 @@ export default function DrawerDialogDemo({ event,UserRole }: { event: Event ,Use
               {/* <Input id="username" defaultValue="@shadcn" /> */}
             </div>
             
-            {UserRole==="participant" && (<Button type="submit" onClick={() => register(event.id)}>Register</Button>)}
-            {UserRole==="student" && (<Button type="submit" onClick={() => register(event.id)}>Register</Button>)}
+            {(UserRole==="participant" || UserRole==="student") && (<Button type="submit" onClick={() => register(event.id)}>Register</Button>)}
+            {UserRole==="student" && (<Button type="submit" onClick={() => register(event.id)}>Volunteer</Button>)}
           </form>
         </DialogContent>
       </Dialog>

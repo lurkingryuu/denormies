@@ -35,13 +35,13 @@ export function ScheduleTable({
   setCount: (count: number) => void;
 }) {
   const [date, setDate] = React.useState("");
-    useEffect(() => {
-        dateFetch();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    dateFetch();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    useEffect(() => {
-        if (date !== "") eventFetch();
-    }, [date]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (date !== "") eventFetch();
+  }, [date]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function dateFetch() {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/schedule/dates`, {
@@ -65,7 +65,7 @@ export function ScheduleTable({
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
-      }
+      },
     })
       .then((res) => res.json())
       .then((data) => setEvents(data))

@@ -48,7 +48,49 @@ function extractDate(date: string) {
   });
 }
 
-export default function DrawerDialogDemo({ event }: { event: Event }) {
+function volunteer(id:string) {
+  fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/volunteer/${id}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id:id
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject();
+      }
+      return res.json();
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
+function register(id:string) {
+  fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/register/${id}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id:id
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject();
+      }
+      return res.json();
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
+export default function DrawerDialogDemo({ event,UserRole }: { event: Event ,UserRole:string}) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -100,7 +142,9 @@ export default function DrawerDialogDemo({ event }: { event: Event }) {
               <Label htmlFor="username">Type: {event.type}</Label>
               {/* <Input id="username" defaultValue="@shadcn" /> */}
             </div>
-            <Button type="submit">Ok</Button>
+            
+            {(UserRole==="participant" || UserRole==="student") && (<Button type="submit" onClick={() => register(event.id)}>Register</Button>)}
+            {UserRole==="student" && (<Button type="submit" onClick={() => register(event.id)}>Volunteer</Button>)}
           </form>
         </DialogContent>
       </Dialog>
@@ -153,6 +197,7 @@ export default function DrawerDialogDemo({ event }: { event: Event }) {
             <Label htmlFor="username">Type: {event.type}</Label>
             {/* <Input id="username" defaultValue="@shadcn" /> */}
           </div>
+
           <Button type="submit">Ok</Button>
         </form>
       </DrawerContent>

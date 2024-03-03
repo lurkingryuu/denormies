@@ -29,21 +29,34 @@ export default function CarouselPlugin() {
   );
 
   const [EventList, setEventList] = React.useState<Event[]>([]);
-  React.useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/events/all`,
-  {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${localStorage.getItem("token")}`,
-    },
-  }
-  )
-  .then((res) => res.json())
-  .then((data) => {
-    setEventList(data.events);
-  });
+  const [UserRole, setUserRole] = React.useState<string>("");
 
+  React.useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/events/all`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setEventList(data.events);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/me`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUserRole(data.role);
+      });
   }, []);
 
   return (
@@ -56,13 +69,10 @@ export default function CarouselPlugin() {
       >
         <CarouselContent>
           {EventList.map((event, index) => (
-            <CarouselItem
-              key={index}
-              className="ring ring-400 ring-opacity-50"
-            >
+            <CarouselItem key={index} className="ring ring-400 ring-opacity-50">
               {/* <div className="p-1"> */}
               {/* <Card className="w-full h-full"> */}
-              <DrawerDialogDemo event={event} />
+              <DrawerDialogDemo event={event} UserRole={UserRole} />
               {/* </Card> */}
               {/* </div> */}
             </CarouselItem>

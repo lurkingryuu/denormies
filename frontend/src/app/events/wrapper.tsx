@@ -33,6 +33,18 @@ export interface Event {
   desc: string;
 }
 
+export interface Volunteer {
+  name: string;
+  roll: string;
+  dept: string;
+}
+
+export interface Participant {
+  name: string;
+  roll: string;
+  dept: string; //add relevant fields
+}
+
 function extractTime(date: string) {
   return new Date(date).toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -48,14 +60,14 @@ function extractDate(date: string) {
   });
 }
 
-function volunteer(id:string) {
+function volunteer(id: string) {
   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/volunteer/${id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      id:id
+      id: id,
     }),
   })
     .then((res) => {
@@ -69,14 +81,14 @@ function volunteer(id:string) {
     });
 }
 
-function register(id:string) {
+function register(id: string) {
   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/register/${id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      id:id
+      id: id,
     }),
   })
     .then((res) => {
@@ -90,10 +102,49 @@ function register(id:string) {
     });
 }
 
-export default function DrawerDialogDemo({ event,UserRole }: { event: Event ,UserRole:string}) {
+export default function DrawerDialogDemo({
+  event,
+  UserRole,
+}: {
+  event: Event;
+  UserRole: string;
+}) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const [VolunteerList, setVolunteerList] = React.useState<Volunteer[]>([]);
+  const [ParticipantList, setParticipantList] = React.useState<Participant[]>(
+    []
+  );
 
+  React.useEffect(() => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/participants/all/${event.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setParticipantList(data.events);
+      });
+  }, []);
+  React.useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/volunteers/all/${event.id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setParticipantList(data.events);
+      });
+  }, []);
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
@@ -142,9 +193,58 @@ export default function DrawerDialogDemo({ event,UserRole }: { event: Event ,Use
               <Label htmlFor="username">Type: {event.type}</Label>
               {/* <Input id="username" defaultValue="@shadcn" /> */}
             </div>
-            
-            {(UserRole==="participant" || UserRole==="student") && (<Button type="submit" onClick={() => register(event.id)}>Register</Button>)}
-            {UserRole==="student" && (<Button type="submit" onClick={() => register(event.id)}>Volunteer</Button>)}
+            {(UserRole === "participant" || UserRole === "student") && (
+              <Button type="submit" onClick={() => register(event.id)}>
+                Register
+              </Button>
+            )}
+            {UserRole === "student" && (
+              <Button type="submit" onClick={() => volunteer(event.id)}>
+                Volunteer
+              </Button>
+            )}
+
+            {UserRole === "organizer" && (
+              <div className="grid gap-2">
+                {!VolunteerList && (
+                  //print no empty list
+                  <Label htmlFor="username">No volunteers as of now</Label>
+                )}
+                {/* {console.log(VolunteerList);console.log("hey")} */}
+                {VolunteerList && (
+                  <>
+                    <Label htmlFor="username">Volunteers</Label>
+                    <ul>
+                      {VolunteerList.map((volunteer) => (
+                        <li>
+                          {volunteer.name} {volunteer.roll} {volunteer.dept}{" "}
+                          {/*add relevant fields*/}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+
+                {!ParticipantList && (
+                  //print no empty list
+                  <Label htmlFor="username">No participants as of now</Label>
+                )}
+                {ParticipantList && (
+                  <>
+                    {" "}
+                    <Label htmlFor="username">Participants</Label>
+                    <ul>
+                      {ParticipantList.map((participant) => (
+                        <li>
+                          {participant.name} {participant.roll}{" "}
+                          {participant.dept}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </div>
+            )}
           </form>
         </DialogContent>
       </Dialog>
@@ -198,25 +298,58 @@ export default function DrawerDialogDemo({ event,UserRole }: { event: Event ,Use
             {/* <Input id="username" defaultValue="@shadcn" /> */}
           </div>
 
-          <Button type="submit">Ok</Button>
+          {(UserRole === "participant" || UserRole === "student") && (
+            <Button type="submit" onClick={() => register(event.id)}>
+              Register
+            </Button>
+          )}
+          {UserRole === "student" && (
+            <Button type="submit" onClick={() => register(event.id)}>
+              Volunteer
+            </Button>
+          )}
+          {UserRole === "organizer" && (
+            <div className="grid gap-2">
+              {!VolunteerList && (
+                //print no empty list
+                <Label htmlFor="username">No volunteers as of now</Label>
+              )}
+              {/* {console.log(VolunteerList);console.log("hey")} */}
+              {VolunteerList && (
+                <>
+                  <Label htmlFor="username">Volunteers</Label>
+                  <ul>
+                    {VolunteerList.map((volunteer) => (
+                      <li>
+                        {volunteer.name} {volunteer.roll} {volunteer.dept}{" "}
+                        {/*add relevant fields*/}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {!ParticipantList && (
+                //print no empty list
+                <Label htmlFor="username">No participants as of now</Label>
+              )}
+              {ParticipantList && (
+                <>
+                  {" "}
+                  <Label htmlFor="username">Participants</Label>
+                  <ul>
+                    {ParticipantList.map((participant) => (
+                      <li>
+                        {participant.name} {participant.roll} {participant.dept}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          )}
         </form>
       </DrawerContent>
     </Drawer>
-  );
-}
-
-function ProfileForm({ className }: React.ComponentProps<"form">) {
-  return (
-    <form className={cn("grid items-start gap-4", className)}>
-      <div className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
-        <Input type="email" id="email" defaultValue="shadcn@example.com" />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="username">Username</Label>
-        <Input id="username" defaultValue="@shadcn" />
-      </div>
-      <Button type="submit">Save changes</Button>
-    </form>
   );
 }

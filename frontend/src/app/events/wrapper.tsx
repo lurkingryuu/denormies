@@ -27,10 +27,25 @@ import { Label } from "@/components/ui/label";
 export interface Event {
   id: string;
   name: string;
-  date: Date;
+  date: string;
   venue: string;
   type: string;
   desc: string;
+}
+
+function extractTime(date: string) {
+  return new Date(date).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+  });
+}
+
+function extractDate(date: string) {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 export default function DrawerDialogDemo({ event }: { event: Event }) {
@@ -50,11 +65,13 @@ export default function DrawerDialogDemo({ event }: { event: Event }) {
                   <div className="mb-2">
                     <h2 className="text-4xl font-semibold">{event.name}</h2>
                   </div>
-                  <div className="text-gray-600 mb-2">
-                    Date: {event.date.toLocaleDateString()}
+                  <div className="mb-2">
+                    Date: {extractDate(event.date)}
+                    <div className=" mb-2"></div>
+                    Time: {extractTime(event.date)}
                   </div>
-                  <div className="text-gray-600 mb-2">Venue: {event.venue}</div>
-                  <div className="text-gray-600 mb-2">{event.type}</div>
+                  <div className=" mb-2">Venue: {event.venue}</div>
+                  <div className="mb-2">{event.type}</div>
                 </div>
               </span>
             </CardContent>
@@ -68,9 +85,7 @@ export default function DrawerDialogDemo({ event }: { event: Event }) {
           </DialogHeader>
           <form className="grid items-start gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="email">
-                Date: {event.date.toLocaleDateString()}
-              </Label>
+              <Label htmlFor="email">Date: {extractDate(event.date)}</Label>
               {/* <Input
                 type="email"
                 id="email"
@@ -106,7 +121,7 @@ export default function DrawerDialogDemo({ event }: { event: Event }) {
                   <h2 className="text-4xl font-semibold">{event.name}</h2>
                 </div>
                 <div className="text-gray-600 mb-2">
-                  Date: {event.date.toLocaleDateString()}
+                  Date: {extractDate(event.date)}
                 </div>
                 <div className="text-gray-600 mb-2">Venue: {event.venue}</div>
                 <div className="text-gray-600 mb-2">{event.type}</div>
@@ -123,9 +138,7 @@ export default function DrawerDialogDemo({ event }: { event: Event }) {
         {/* <ProfileForm className="px-4" /> */}
         <form className="px-4 grid items-start gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="email">
-              Date: {event.date.toLocaleDateString()}
-            </Label>
+            <Label htmlFor="email">Date: {extractDate(event.date)}</Label>
             {/* <Input
                 type="email"
                 id="email"

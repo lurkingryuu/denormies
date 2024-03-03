@@ -43,7 +43,7 @@ async def get_current_user(
         return BaseUser(
             id=user.id,  
             email=user.email, 
-            phone=user.phone, 
+            phone=user.phone if user.phone else "",
             name=user.name, 
             role=user.role, 
             password=user.password
@@ -54,6 +54,7 @@ async def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials"
         )
     except Exception as e:
+        print(f"Error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unknown error: {e}"
         )

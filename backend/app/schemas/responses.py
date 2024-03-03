@@ -29,9 +29,22 @@ class UserMeResponse(BaseResponse):
     name: str
     role: str
 
+class UserAdminResponse(BaseResponse):
+    id: str
+    email: EmailStr
+    phone: str
+    name: str
+    role: str
+
+class UserMeResponse(BaseResponse):
+    email: EmailStr
+    phone: str
+    name: str
+    role: str
+
 
 class UserListResponse(BaseResponse):
-    users: List[UserMeResponse]
+    users: List[UserAdminResponse]
 
 
 class UserRolerResponse(BaseResponse):
@@ -49,15 +62,8 @@ class EventSchema(BaseResponse):
     venue: str
 
 
-class MiniEventSchema(BaseResponse):
-    id: str
-    name: str
-    type: str
-    date: datetime.datetime
-
-
 class EventListResponse(BaseResponse):
-    events: List[MiniEventSchema]
+    events: List[EventSchema]
 
 
 # ----------------- Schedule -----------------

@@ -26,13 +26,7 @@ import { Popover, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { PopoverContent } from "@radix-ui/react-popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "./ui/command";
+import { Command, CommandGroup, CommandItem } from "./ui/command";
 
 type FormSchema = {
   name: string;
@@ -41,6 +35,9 @@ type FormSchema = {
   password: string;
   confirmPassword: string;
   role: string;
+  roll?: string;
+  department?: string;
+  university?: string;
 };
 
 const formSchema: ZodType<FormSchema> = z
@@ -51,6 +48,9 @@ const formSchema: ZodType<FormSchema> = z
     password: z.string().min(4, "Password must be at least 4 characters"),
     confirmPassword: z.string(),
     role: z.string(),
+    roll: z.string().optional(),
+    department: z.string().optional(),
+    university: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -60,7 +60,6 @@ const formSchema: ZodType<FormSchema> = z
     message: "Phone number must be 10 digits",
     path: ["phone"],
   });
-
 
 type Roles = {
   value: string;
@@ -87,21 +86,22 @@ const roles: Roles[] = [
 ];
 
 export function SignupForm() {
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-
+    
     defaultValues: {
       name: "",
       email: "",
       phone: "",
       password: "",
       confirmPassword: "",
-      role: "",
+      role: "participant",
     },
   });
-
+  
+  const [initSignUp, setInitSignUp] = React.useState(false);
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Send the data to the backend
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`, {
       method: "POST",
       headers: {
@@ -110,7 +110,7 @@ export function SignupForm() {
       body: JSON.stringify({
         name: values.name,
         email: values.email,
-        phone: values.phone,
+        phone: (values.phone === "" ? undefined : values.phone), 
         password: values.password,
         role: values.role,
       }),
@@ -122,22 +122,57 @@ export function SignupForm() {
               type: "manual",
               message: data.detail,
             });
-          }
-          );
+          });
           return Promise.reject();
         }
         return res.json();
-      }
-      )
+      })
       .then((data) => {
         localStorage.setItem("token", data.token);
-        window.location.href = "/";
+        setInitSignUp(true);
       })
       .catch((error) => {
         console.error("Error:", error);
-      })
-      ;
+      });
   }
+
+  React.useEffect(() => {
+    if (initSignUp) {
+      if (form.watch("role") === "students") {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/students/me`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            roll: form.watch("roll"),
+            department: form.watch("department"),
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            window.location.href = "/";
+          });
+      } else if (form.watch("role") === "participant") {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/participants/me`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            university: form.watch("university"),
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            window.location.href = "/";
+          });
+      }
+      else window.location.href = "/";
+    }
+  }, [initSignUp]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [open, setOpen] = React.useState(false);
 
@@ -253,6 +288,51 @@ export function SignupForm() {
                 </FormItem>
               )}
             />
+            {form.watch("role") === "student" && (
+              <FormField
+                control={form.control}
+                name="roll"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Roll</FormLabel>
+                    <FormControl>
+                      <Input placeholder="123456" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            {form.watch("role") === "student" && (
+              <FormField
+                control={form.control}
+                name="department"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Department</FormLabel>
+                    <FormControl>
+                      <Input placeholder="CSE" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            {form.watch("role") === "participant" && (
+              <FormField
+                control={form.control}
+                name="university"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>University</FormLabel>
+                    <FormControl>
+                      <Input placeholder="IIT" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             {/* ------------------------------ Password --------------------------------- */}
             <FormField
               control={form.control}

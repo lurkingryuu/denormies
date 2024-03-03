@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import deps
 from app.models import User
-from app.schemas.responses import UserListResponse, UserResponse, UserMeResponse, UserRolerResponse
+from app.schemas.responses import UserAdminResponse, UserListResponse, UserResponse, UserMeResponse, UserRolerResponse
 from app.schemas.requests import (
     UserChangeRequest,
     UserCreateRequest,
@@ -94,7 +94,8 @@ async def list_users(
         if user.role == "admin":
             continue
         all_users.append(
-            UserMeResponse(
+            UserAdminResponse(
+                id=user.id,
                 email=user.email,
                 phone=user.phone if user.phone else "",
                 name=user.name,
@@ -104,7 +105,7 @@ async def list_users(
     return UserListResponse(users=all_users)
 
 
-@router.get("/{id}", response_model=UserMeResponse, status_code=status.HTTP_200_OK)
+@router.get("/{id}", response_model=UserAdminResponse, status_code=status.HTTP_200_OK)
 async def get_user(
     id: str,
     current_user: BaseUser = Depends(deps.get_current_user),
@@ -121,6 +122,7 @@ async def get_user(
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return UserMeResponse(
+        id=user.id,
         email=user.email,
         phone=user.phone if user.phone else "",
         name=user.name,

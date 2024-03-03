@@ -33,11 +33,12 @@ async def register_new_user(
     user = User(
         email=new_user.email,
         password=get_password_hash(new_user.password),
-        phone=new_user.phone,
+        phone=new_user.phone if new_user.phone else "",
         name=new_user.name,
         role=new_user.role,
     )
     session.add(user)
+    await session.commit()
     return UserResponse(status="success", token=security.create_jwt_token(new_user.email, new_user.password))
 
 

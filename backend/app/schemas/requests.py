@@ -20,13 +20,6 @@ class UserCreateRequest(BaseRequest):
     name: str
     role: str
 
-    @validator("phone")
-    def phone_must_be_valid(cls, v):
-        if v is not None and len(v) < 10:
-            raise ValueError("Phone number must be at least 10 digits")
-        return v
-
-
 class UserChangeRequest(BaseRequest):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None

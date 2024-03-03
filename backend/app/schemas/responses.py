@@ -34,6 +34,10 @@ class UserListResponse(BaseResponse):
     users: List[UserMeResponse]
 
 
+class UserRolerResponse(BaseResponse):
+    role: str
+
+
 # ----------------- Events -----------------
 class EventSchema(BaseResponse):
     id: str

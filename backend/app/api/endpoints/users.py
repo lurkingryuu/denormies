@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import deps
 from app.models import User
-from app.schemas.responses import UserListResponse, UserResponse, UserMeResponse
+from app.schemas.responses import UserListResponse, UserResponse, UserMeResponse, UserRolerResponse
 from app.schemas.requests import (
     UserChangeRequest,
     UserCreateRequest,
@@ -65,6 +65,13 @@ async def delete_current_user(
     await session.execute(delete(User).where(User.id == current_user.id))
     await session.commit()
 
+
+@router.get("/role", response_model=UserRolerResponse, status_code=status.HTTP_200_OK)
+async def get_current_user_role(
+    current_user: BaseUser = Depends(deps.get_current_user),
+):
+    """Get current user role"""
+    return UserRolerResponse(role=current_user.role)
 
 # ----------------------------- Admin -----------------------------
 @router.get("/all", response_model=UserListResponse)

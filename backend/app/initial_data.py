@@ -223,6 +223,7 @@ async def main() -> None:
                 name="admin",
                 role="admin",
                 password=get_password_hash(config.settings.FIRST_SUPERUSER_PASSWORD),
+                phone="1234567890",
             )
             session.add(new_superuser)
             await session.commit()

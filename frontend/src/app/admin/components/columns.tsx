@@ -52,13 +52,6 @@ export const columns: ColumnDef<Task>[] = [
       <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => {
-      // const status = statuses.find(
-      //   (status) => status.value === row.getValue("email")
-      // );
-      // const stat
-      // if (!status) {
-      //   return null;
-      // }
 
       return (
         <div className="flex w-[100px] items-center">
@@ -69,9 +62,9 @@ export const columns: ColumnDef<Task>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
+    // filterFn: (row, id, value) => {
+    //   return value.includes(row.getValue(id));
+    // },
   },
   {
     accessorKey: "phone",
@@ -93,6 +86,33 @@ export const columns: ColumnDef<Task>[] = [
             <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )} */}
           <span>{row.getValue("phone")}</span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "role",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Role" />
+    ),
+    cell: ({ row }) => {
+      // const priority = priorities.find(
+      //   (priority) => priority.value === row.getValue("role")
+      // );
+
+      // if (!priority) {
+      //   return null;
+      // }
+
+      return (
+        <div className="flex items-center">
+          {/* {priority.icon && (
+            <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+          )} */}
+          <span>{row.getValue("role")}</span>
         </div>
       );
     },

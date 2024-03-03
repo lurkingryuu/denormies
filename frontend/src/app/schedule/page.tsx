@@ -27,7 +27,11 @@ export default function Schedule() {
   const [count, setCount] = React.useState(0);
   const [events, setEvents] = React.useState<Event[]>([]);
 
-  console.log(daynum);
+  React.useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      window.location.href = "/auth";
+    }
+  }, []);
 
   return (
     <main className="flex flex-col items-center justify-center h-screen">

@@ -3,12 +3,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import deps
-from app.models import Event, Manage, Participant, User, Registration
+from app.models import Event, Manage, Participant, Prize, User, Registration
 from app.schemas.responses import (
     EventListResponse,
     List,
     EventSchema,
     RegistrationResponse,
+    WinnerResponse,
 )
 from app.schemas.requests import EventChangeRequest, BaseUser
 
@@ -88,6 +89,53 @@ async def read_students(
         )
     return
 
+
+def formatINR(number):
+    s, *d = str(number).partition(".")
+    r = ",".join([s[x-2:x] for x in range(-3, -len(s), -2)][::-1] + [s[-3:]])
+    return "₹ " +"".join([r] + d)
+
+
+@router.get("/winners/{event_id}", response_model=List[WinnerResponse], status_code=status.HTTP_200_OK)
+async def list_winners(
+    event_id: str,
+    current_user: BaseUser = Depends(deps.get_current_user),
+    session: AsyncSession = Depends(deps.get_session),
+):
+    """List all winners for an event"""
+    try:
+        result = await session.execute(
+            select(Prize).filter(Prize.event_id == event_id)
+        )
+        prizes = result.scalars().all()
+        if len(prizes) == 0:
+            return []
+    except Exception as e:
+        print(e)
+        return []
+    
+    all_winners: List[WinnerResponse] = []
+    for prize in prizes:
+        if prize.winner_id is not None:
+            user = await session.execute(
+                select(User).filter(User.id == prize.winner_id)
+            )
+            user = user.scalar_one()
+            if user is None:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Inconsistent data",
+                )
+        all_winners.append(
+            WinnerResponse(
+                name=user.name if prize.winner_id is not None else "Not declared",
+                position=prize.position,
+                prize=formatINR(prize.amount),
+            )
+        )
+    
+    all_winners.sort(key=lambda x: x.position)
+    return all_winners
 
 # ----------------------------- Restricted -----------------------------
 @router.post("/", response_model=EventSchema, status_code=201)

@@ -463,6 +463,8 @@ prizes_data = [
     {"event_id": "3", "position": 1, "amount": 30000, "winner_id": None},
     {"event_id": "3", "position": 2, "amount": 25000, "winner_id": None},
     {"event_id": "3", "position": 3, "amount": 20000, "winner_id": None},
+    {"event_id": "3", "position": 3, "amount": 15000, "winner_id": None},
+    {"event_id": "3", "position": 3, "amount": 10000, "winner_id": None},
     {"event_id": "4", "position": 1, "amount": 10000, "winner_id": None},
     {"event_id": "4", "position": 2, "amount": 7000, "winner_id": None},
     {"event_id": "4", "position": 3, "amount": 5000, "winner_id": None}
@@ -554,9 +556,9 @@ async def create_triggers(session):
             CREATE OR REPLACE FUNCTION reg_check()
             RETURNS TRIGGER AS $$
             DECLARE
-            acid VARCHAR(20);
+            acid UUID;
             ac_avail INTEGER;
-            mid VARCHAR(20);
+            mid UUID;
             m_avail INTEGER;
             BEGIN
             select id,capacity into acid,ac_avail from accomodation order by capacity desc limit 1;

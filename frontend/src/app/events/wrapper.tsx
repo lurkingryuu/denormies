@@ -96,7 +96,6 @@ export default function DrawerDialogDemo({
   const [isOrganizer, setIsOrganizer] = React.useState(false);
   const [isVolunteer, setIsVolunteer] = React.useState(false);
   const [isParticipant, setIsParticipant] = React.useState(false);
-  // const [winner, setWinner] = React.useState(false);
 
   React.useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/events/winners/${event.id}`, {
@@ -118,7 +117,7 @@ export default function DrawerDialogDemo({
       .then((data) => {
         setWinner(data);
       });
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function volunteer(id: string) {
     if (!isVolunteer) {
@@ -169,9 +168,8 @@ export default function DrawerDialogDemo({
             }
             return Promise.reject();
           }
-          return res.json();
         })
-        .then((data) => {
+        .then(() => {
           setIsParticipant(true);
         });
     }
@@ -408,50 +406,37 @@ export default function DrawerDialogDemo({
                     </Table>
                   </>
                 )}
-                <>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[100px]">Position</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Prize</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {winner.map((win) => (
-                        <TableRow key={win.position}>
-                          <TableCell className="font-medium">
-                            {win.position}
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {win.name}
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {win.prize}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                    <TableFooter>
-                      <TableRow>
-                        <TableCell colSpan={3}>Total</TableCell>
-                        <TableCell className="text-right">
-                          {ParticipantList.length}
+              </div>
+            )}
+            {winner.length != 0 && (
+              <>
+                <Separator />
+                <Label htmlFor="username">Winners</Label>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px]">Position</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Prize</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {winner.map((win) => (
+                      <TableRow key={win.position}>
+                        <TableCell className="font-medium">
+                          {win.position}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {win.name}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {win.prize}
                         </TableCell>
                       </TableRow>
-                    </TableFooter>
-                  </Table>
-
-                  <Label htmlFor="username">Volunteers</Label>
-                  <ul>
-                    {VolunteerList.map((volunteer) => (
-                      <li key={volunteer.roll}>
-                        {volunteer.name} {volunteer.roll} {volunteer.dept}{" "}
-                      </li>
                     ))}
-                  </ul>
-                </>
-              </div>
+                  </TableBody>
+                </Table>
+              </>
             )}
           </form>
         </DialogContent>
@@ -637,6 +622,32 @@ export default function DrawerDialogDemo({
                 </>
               )}
             </div>
+          )}
+          {winner.length != 0 && (
+            <>
+              <Separator />
+              <Label htmlFor="username">Winners</Label>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Position</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Prize</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {winner.map((win) => (
+                    <TableRow key={win.position}>
+                      <TableCell className="font-medium">
+                        {win.position}
+                      </TableCell>
+                      <TableCell className="font-medium">{win.name}</TableCell>
+                      <TableCell className="font-medium">{win.prize}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </>
           )}
         </form>
       </DrawerContent>

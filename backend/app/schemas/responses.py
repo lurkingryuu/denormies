@@ -64,6 +64,11 @@ class RegistrationResponse(BaseResponse):
     name: str
     email: EmailStr
 
+class WinnerResponse(BaseResponse):
+    name: str
+    position: int
+    prize: str
+
 # ----------------- Schedule -----------------
 class ScheduleResponse(BaseResponse):
     name: str

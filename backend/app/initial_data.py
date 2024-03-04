@@ -459,10 +459,13 @@ sponsorships_data = [
 prizes_data = [
     {"event_id": "2", "position": 1, "amount": 20000, "winner_id": None},
     {"event_id": "2", "position": 2, "amount": 15000, "winner_id": None},
+    {"event_id": "2", "position": 3, "amount": 10000, "winner_id": None},
     {"event_id": "3", "position": 1, "amount": 30000, "winner_id": None},
     {"event_id": "3", "position": 2, "amount": 25000, "winner_id": None},
+    {"event_id": "3", "position": 3, "amount": 20000, "winner_id": None},
     {"event_id": "4", "position": 1, "amount": 10000, "winner_id": None},
     {"event_id": "4", "position": 2, "amount": 7000, "winner_id": None},
+    {"event_id": "4", "position": 3, "amount": 5000, "winner_id": None}
 ]
 
 messes_data = [

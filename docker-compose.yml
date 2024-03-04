@@ -21,9 +21,7 @@ services:
     depends_on:
       - backend
     restart: "unless-stopped"
-    build:
-      context: ./frontend/
-      dockerfile: Dockerfile
+    image: lurkingryuu/denormies_frontend:v1.0.3
     ports:
       - '7069:3000'
     environment:
@@ -33,16 +31,13 @@ services:
     depends_on:
       - postgres
     restart: "unless-stopped"
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile
+    image: lurkingryuu/denormies_backend:v1.0.3
     env_file:
       - ./backend/.env
     environment:
       - DEFAULT_DATABASE_HOSTNAME=postgres
       - DEFAULT_DATABASE_PORT=5432
     ports:
-      - 7420:8000
-  
+      - '7420:8000'
 volumes:
   postgres_data:

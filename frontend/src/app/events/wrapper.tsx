@@ -1,5 +1,12 @@
 import * as React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
@@ -151,47 +158,65 @@ export default function DrawerDialogDemo({
         <DialogTrigger asChild>
           {/* <Button variant="outline"> */}
           <Card>
-            <CardContent className="flex aspect-square items-center justify-center p-6">
-              <span className="text-4xl font-semibold">
-                <div className="text-center">
-                  {/* Move event information to the lower half of the card */}
-                  <div className="mb-2">
-                    <h2 className="text-4xl font-semibold">{event.name}</h2>
-                  </div>
-                  <div className="mb-2">
-                    Date: {extractDate(event.date)}
-                    <div className=" mb-2"></div>
-                    Time: {extractTime(event.date)}
-                  </div>
-                  <div className=" mb-2">Venue: {event.venue}</div>
-                  <div className="mb-2">{event.type}</div>
-                </div>
-              </span>
+            <CardHeader>
+              <CardTitle className="font-bold text-xl">{event.name}</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              <div className="flex items-center justify-between space-x-2">
+                <Label htmlFor="necessary" className="flex flex-col space-y-1">
+                  <span>{extractDate(event.date)}</span>
+                </Label>
+                <span>{extractTime(event.date)}</span>
+                {/* <Switch id="necessary" defaultChecked /> */}
+              </div>
+              <div className="flex items-center justify-between space-x-2">
+                <Label htmlFor="functional" className="flex flex-row space-x-2">
+                  <div>Venue:</div>{" "}
+                  <div className="font-bold"> {event.venue}</div>
+                </Label>
+                {/* <Switch id="functional" /> */}
+              </div>
+              <div className="flex items-center justify-between space-x-2">
+                <Label htmlFor="functional" className="flex flex-row space-x-2">
+                  <div>Type:</div>{" "}
+                  <div className="font-bold"> {event.type}</div>
+                </Label>
+                {/* <Switch id="functional" /> */}
+              </div>
             </CardContent>
+            <CardFooter>
+              <Button variant="outline" className="w-full">
+                View Details
+              </Button>
+            </CardFooter>
           </Card>
           {/* </Button> */}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{event.name}</DialogTitle>
+            <DialogTitle className="font-bold text-xl">{event.name}</DialogTitle>
             <DialogDescription>{event.desc}</DialogDescription>
           </DialogHeader>
           <form className="grid items-start gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Date: {extractDate(event.date)}</Label>
-              {/* <Input
-                type="email"
-                id="email"
-                defaultValue="shadcn@example.com"
-              /> */}
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="necessary" className="flex flex-col space-y-1">
+                <span>{extractDate(event.date)}</span>
+              </Label>
+              <span>{extractTime(event.date)}</span>
+              {/* <Switch id="necessary" defaultChecked /> */}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="username">Venue: {event.venue}</Label>
-              {/* <Input id="username" defaultValue="@shadcn" /> */}
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="functional" className="flex flex-row space-x-2">
+                <div>Venue:</div>{" "}
+                <div className="font-bold"> {event.venue}</div>
+              </Label>
+              {/* <Switch id="functional" /> */}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="username">Type: {event.type}</Label>
-              {/* <Input id="username" defaultValue="@shadcn" /> */}
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="functional" className="flex flex-row space-x-2">
+                <div>Type:</div> <div className="font-bold"> {event.type}</div>
+              </Label>
+              {/* <Switch id="functional" /> */}
             </div>
             {(UserRole === "participant" || UserRole === "student") && (
               <Button type="submit" onClick={() => register(event.id)}>
@@ -257,45 +282,63 @@ export default function DrawerDialogDemo({
         {/* <Button variant="outline">Edit Profile</Button>
          */}
         <Card>
-          <CardContent className="flex aspect-square items-center justify-center p-6">
-            <span className="text-4xl font-semibold">
-              <div className="text-center">
-                {/* Move event information to the lower half of the card */}
-                <div className="mb-2">
-                  <h2 className="text-4xl font-semibold">{event.name}</h2>
-                </div>
-                <div className="text-gray-600 mb-2">
-                  Date: {extractDate(event.date)}
-                </div>
-                <div className="text-gray-600 mb-2">Venue: {event.venue}</div>
-                <div className="text-gray-600 mb-2">{event.type}</div>
-              </div>
-            </span>
+          <CardHeader>
+            <CardTitle className="font-bold text-xl">{event.name}</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-6">
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="necessary" className="flex flex-col space-y-1">
+                <span>{extractDate(event.date)}</span>
+              </Label>
+              <span>{extractTime(event.date)}</span>
+              {/* <Switch id="necessary" defaultChecked /> */}
+            </div>
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="functional" className="flex flex-row space-x-2">
+                <div>Venue:</div>{" "}
+                <div className="font-bold"> {event.venue}</div>
+              </Label>
+              {/* <Switch id="functional" /> */}
+            </div>
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="functional" className="flex flex-row space-x-2">
+                <div>Type:</div> <div className="font-bold"> {event.type}</div>
+              </Label>
+              {/* <Switch id="functional" /> */}
+            </div>
           </CardContent>
+          <CardFooter>
+            <Button variant="outline" className="w-full">
+              View Details
+            </Button>
+          </CardFooter>
         </Card>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>{event.name}</DrawerTitle>
+          <DrawerTitle className="font-bold text-xl">{event.name}</DrawerTitle>
           <DrawerDescription>{event.desc}</DrawerDescription>
         </DrawerHeader>
         {/* <ProfileForm className="px-4" /> */}
         <form className="px-4 grid items-start gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="email">Date: {extractDate(event.date)}</Label>
-            {/* <Input
-                type="email"
-                id="email"
-                defaultValue="shadcn@example.com"
-              /> */}
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="necessary" className="flex flex-col space-y-1">
+              <span>{extractDate(event.date)}</span>
+            </Label>
+            <span>{extractTime(event.date)}</span>
+            {/* <Switch id="necessary" defaultChecked /> */}
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="username">Venue: {event.venue}</Label>
-            {/* <Input id="username" defaultValue="@shadcn" /> */}
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="functional" className="flex flex-row space-x-2">
+              <div>Venue:</div> <div className="font-bold"> {event.venue}</div>
+            </Label>
+            {/* <Switch id="functional" /> */}
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="username">Type: {event.type}</Label>
-            {/* <Input id="username" defaultValue="@shadcn" /> */}
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="functional" className="flex flex-row space-x-2">
+              <div>Type:</div> <div className="font-bold"> {event.type}</div>
+            </Label>
+            {/* <Switch id="functional" /> */}
           </div>
 
           {(UserRole === "participant" || UserRole === "student") && (

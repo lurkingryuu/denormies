@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError, DBAPIError
 
 from app.api import deps
 from app.models import Manage, Student, User, Volunteer, Event
@@ -42,27 +43,22 @@ async def volunteer_student(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
         )
-    
-    try:
-        already_volunteered = await session.execute(
-            select(Volunteer).filter(Volunteer.id == current_user.id)
-        )
-        already_volunteered = already_volunteered.scalar_one()
-        if already_volunteered:
-            raise HTTPException(
-                status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Already registered as Volunteer"
-            )
-    except Exception as e:
-        print(e)
 
     try:
         voulunteer = Volunteer(id=current_user.id, event_id=event.id)
         session.add(voulunteer)
         await session.commit()
-    except Exception as e:
+    except IntegrityError as e:
         print(e)
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="Already registered as Participant"
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Already registered as participant",
+        )
+    except DBAPIError as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="Already registered as Volunteer",
         )
     return StudentVolunteerResponse(
         name=current_user.name, roll=student.roll, dept=student.dept
@@ -99,15 +95,13 @@ async def read_volunteers(
             and current_user.id in [organizer.id for organizer in organizers]
         )
         or (
-            current_user.role == "student" and
-            current_user.id in [volunteer.id for volunteer in volunteers_for_event]
+            current_user.role == "student"
+            and current_user.id in [volunteer.id for volunteer in volunteers_for_event]
         )
     ):
         volunteers: List[StudentVolunteerResponse] = []
         for volunteer in volunteers_for_event:
-            user = await session.execute(
-                select(User).filter(User.id == volunteer.id)
-            )
+            user = await session.execute(select(User).filter(User.id == volunteer.id))
             user = user.scalar_one()
             if user is None:
                 raise HTTPException(
@@ -134,4 +128,3 @@ async def read_volunteers(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
         )
-

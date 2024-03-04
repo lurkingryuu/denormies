@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError, DBAPIError
 
 from app.api import deps
 from app.models import Event, Manage, Participant, Prize, User, Registration
@@ -62,41 +63,34 @@ async def read_students(
         )
 
     try:
-        existing_registration = await session.execute(
-            select(Registration).filter(
-                Registration.event_id == event_id,
-                Registration.user_id == current_user.id,
-            )
-        )
-        existing_registration = existing_registration.scalar_one()
-        if existing_registration:
-            raise HTTPException(
-                status_code=status.HTTP_406_NOT_ACCEPTABLE,
-                detail="Already registered for the event",
-            )
-    except Exception as e:
-        print(e)
-
-    try:
         registration = Registration(event_id=event_id, user_id=current_user.id)
         session.add(registration)
         await session.commit()
-    except Exception as e:
+    except IntegrityError as e:
         print(e)
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
+            detail="Already registered as Participant",
+        )
+    except DBAPIError as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail="Already registered as Volunteer",
         )
-    return
 
 
 def formatINR(number):
     s, *d = str(number).partition(".")
-    r = ",".join([s[x-2:x] for x in range(-3, -len(s), -2)][::-1] + [s[-3:]])
-    return "₹ " +"".join([r] + d)
+    r = ",".join([s[x - 2 : x] for x in range(-3, -len(s), -2)][::-1] + [s[-3:]])
+    return "₹ " + "".join([r] + d)
 
 
-@router.get("/winners/{event_id}", response_model=List[WinnerResponse], status_code=status.HTTP_200_OK)
+@router.get(
+    "/winners/{event_id}",
+    response_model=List[WinnerResponse],
+    status_code=status.HTTP_200_OK,
+)
 async def list_winners(
     event_id: str,
     current_user: BaseUser = Depends(deps.get_current_user),
@@ -104,16 +98,14 @@ async def list_winners(
 ):
     """List all winners for an event"""
     try:
-        result = await session.execute(
-            select(Prize).filter(Prize.event_id == event_id)
-        )
+        result = await session.execute(select(Prize).filter(Prize.event_id == event_id))
         prizes = result.scalars().all()
         if len(prizes) == 0:
             return []
     except Exception as e:
         print(e)
         return []
-    
+
     all_winners: List[WinnerResponse] = []
     for prize in prizes:
         if prize.winner_id is not None:
@@ -133,9 +125,10 @@ async def list_winners(
                 prize=formatINR(prize.amount),
             )
         )
-    
+
     all_winners.sort(key=lambda x: x.position)
     return all_winners
+
 
 # ----------------------------- Restricted -----------------------------
 @router.post("/", response_model=EventSchema, status_code=201)

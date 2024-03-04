@@ -135,9 +135,9 @@ export default function DrawerDialogDemo({
           if (!res.ok) {
             setIsVolunteer(true);
             if (res.status === 409) {
-              alert("You are already registered as a participant");
-            } else if (res.status === 406) {
               alert("Already registered as a volunteer");
+            } else if (res.status === 406) {
+              alert("You are already registered as a participant");
             }
             return Promise.reject();
           }
@@ -162,9 +162,9 @@ export default function DrawerDialogDemo({
           if (!res.ok) {
             setIsParticipant(true);
             if (res.status === 409) {
-              alert("You are already registered as a volunteer");
-            } else if (res.status === 406) {
               alert("Already registered as a participant");
+            } else if (res.status === 406) {
+              alert("You are already registered as a volunteer");
             }
             return Promise.reject();
           }

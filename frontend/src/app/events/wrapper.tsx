@@ -57,6 +57,12 @@ export interface Participant {
   email: string;
 }
 
+export interface Winner {
+  name: string;
+  position: string;
+  prize: string;
+}
+
 function extractTime(date: string) {
   return new Date(date).toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -85,9 +91,33 @@ export default function DrawerDialogDemo({
   const [ParticipantList, setParticipantList] = React.useState<Participant[]>(
     []
   );
+  const [winner, setWinner] = React.useState<Winner[]>([]);
   const [isOrganizer, setIsOrganizer] = React.useState(false);
   const [isVolunteer, setIsVolunteer] = React.useState(false);
   const [isParticipant, setIsParticipant] = React.useState(false);
+  // const [winner, setWinner] = React.useState(false);
+
+  React.useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/events/winners/${event.id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          setIsOrganizer(true);
+          return res.json();
+        } else {
+          setIsOrganizer(false);
+          return Promise.reject();
+        }
+      })
+      .then((data) => {
+        setWinner(data);
+      });
+  }, []);
 
   function volunteer(id: string) {
     if (!isVolunteer) {
@@ -386,6 +416,49 @@ export default function DrawerDialogDemo({
                     </ul>
                   </>
                 )}
+                <>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[100px]">Position</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Prize</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {winner.map((win) => (
+                        <TableRow key={win.position}>
+                          <TableCell className="font-medium">
+                            {win.position}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {win.name}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {win.prize}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell colSpan={3}>Total</TableCell>
+                        <TableCell className="text-right">
+                          {ParticipantList.length}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+
+                  <Label htmlFor="username">Volunteers</Label>
+                  <ul>
+                    {VolunteerList.map((volunteer) => (
+                      <li key={volunteer.roll}>
+                        {volunteer.name} {volunteer.roll} {volunteer.dept}{" "}
+                      </li>
+                    ))}
+                  </ul>
+                </>
               </div>
             )}
           </form>
@@ -502,7 +575,7 @@ export default function DrawerDialogDemo({
                   </ul>
                 </>
               )}
-              <h1>Hey</h1>
+
               {!ParticipantList && (
                 //print no empty list
                 <Label htmlFor="username">No participants as of now</Label>

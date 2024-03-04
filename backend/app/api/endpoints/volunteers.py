@@ -42,12 +42,30 @@ async def volunteer_student(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
         )
+    
+    try:
+        already_volunteered = await session.execute(
+            select(Volunteer).filter(Volunteer.id == current_user.id)
+        )
+        already_volunteered = already_volunteered.scalar_one()
+        if already_volunteered:
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Already registered as Volunteer"
+            )
+    except Exception as e:
+        print(e)
 
-    voulunteer = Volunteer(id=current_user.id, event_id=event.id)
-    session.add(voulunteer)
-    await session.commit()
+    try:
+        voulunteer = Volunteer(id=current_user.id, event_id=event.id)
+        session.add(voulunteer)
+        await session.commit()
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Already registered as Participant"
+        )
     return StudentVolunteerResponse(
-        name=current_user.name, roll=student.roll, dept=student.depts
+        name=current_user.name, roll=student.roll, dept=student.dept
     )
 
 
@@ -75,24 +93,45 @@ async def read_volunteers(
     )
     volunteers_for_event = volunteers_for_event.scalars().all()
     if (
-        current_user.role != "admin"
-        and (
-            current_user.role != "organizer"
-            or current_user.id not in [organizer.id for organizer in organizers]
+        current_user.role == "admin"
+        or (
+            current_user.role == "organizer"
+            and current_user.id in [organizer.id for organizer in organizers]
         )
-        and (
-            current_user.id not in [volunteer.id for volunteer in volunteers_for_event]
+        or (
+            current_user.role == "student" and
+            current_user.id in [volunteer.id for volunteer in volunteers_for_event]
         )
     ):
+        volunteers: List[StudentVolunteerResponse] = []
+        for volunteer in volunteers_for_event:
+            user = await session.execute(
+                select(User).filter(User.id == volunteer.id)
+            )
+            user = user.scalar_one()
+            if user is None:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Inconsistent data",
+                )
+            student = await session.execute(
+                select(Student).filter(Student.id == volunteer.id)
+            )
+            student = student.scalar_one()
+            if student is None:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Inconsistent data",
+                )
+            volunteers.append(
+                StudentVolunteerResponse(
+                    name=user.name, roll=student.roll, dept=student.dept
+                )
+            )
+
+        return volunteers
+    else:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
         )
 
-    return [
-        StudentVolunteerResponse(
-            name=volunteer.User.name,
-            roll=volunteer.Student.roll,
-            dept=volunteer.Student.dept,
-        )
-        for volunteer in volunteers_for_event
-    ]

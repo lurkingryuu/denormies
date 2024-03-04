@@ -41,12 +41,12 @@ export default function CarouselPlugin() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setEventList(data.events);
+        setEventList([data.events[0]]);
       });
   }, []);
 
   React.useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/me`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

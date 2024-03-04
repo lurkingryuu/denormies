@@ -11,6 +11,7 @@ from sqlalchemy import select, insert, text
 from app.models import (
     Accomodation,
     Competition,
+    Manage,
     Mess,
     Prize,
     Sponsor,
@@ -401,6 +402,26 @@ events_data = [
     },
 ]
 
+manage_data = [
+    {'id': 'U001', 'event_id': '1', 'position': 'Head', 'responsibility': 'Overlooks the event'},
+    {'id': 'U002', 'event_id': '1', 'position': 'Secretary', 'responsibility': 'Assists the guest lecturer in the event'},
+    {'id': 'U004', 'event_id': '1', 'position': 'Secretary', 'responsibility': 'Stage Management'},
+
+    {'id': 'U006', 'event_id': '2', 'position': 'Head', 'responsibility': 'Overlooks the event. Question Framing'},
+    {'id': 'U007', 'event_id': '2', 'position': 'Secretary', 'responsibility': 'Invigilation and crowd management'},
+
+    {'id': 'U006', 'event_id': '3', 'position': 'Head', 'responsibility': 'Overlooks the event. Question Framing'},
+    {'id': 'U007', 'event_id': '3', 'position': 'Secretary', 'responsibility': 'Invigilation and crowd management'},
+
+    {'id': 'U006', 'event_id': '4', 'position': 'Head', 'responsibility': 'Overlooks the event. Game Design'},
+    {'id': 'U007', 'event_id': '4', 'position': 'Secretary', 'responsibility': 'Invigilation and crowd management'},
+
+    {'id': 'U001', 'event_id': '5', 'position': 'Head', 'responsibility': 'Overlooks the event. Relations management'},
+    {'id': 'U002', 'event_id': '5', 'position': 'Secretary', 'responsibility': 'Assistance for the guest'},
+    {'id': 'U004', 'event_id': '5', 'position': 'Secretary', 'responsibility': 'Stage Management'},
+
+]
+
 competitions_data = [
     {"id": "2", "props": "Computers,Chairs,Papers,Pens"},
     {"id": "3", "props": "Papers,Pens,Chairs"},
@@ -500,6 +521,10 @@ async def populate_data(session):
                 seconds=int(event["duration"].split(":")[2]),
             )
             await session.execute(insert(Event).values(event))
+        for manage in manage_data:
+            manage["id"] = convert_to_uuid(manage["id"])
+            manage["event_id"] = convert_to_uuid(manage["event_id"])
+            await session.execute(insert(Manage).values(manage))
         for competition in competitions_data:
             competition["id"] = convert_to_uuid(competition["id"])
             await session.execute(insert(Competition).values(competition))

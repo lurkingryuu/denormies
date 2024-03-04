@@ -13,16 +13,14 @@ import {
 } from "@/components/ui/dialog";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { set } from "react-hook-form";
 
 export interface Event {
   id: string;
@@ -41,8 +39,7 @@ export interface Volunteer {
 
 export interface Participant {
   name: string;
-  roll: string;
-  dept: string; //add relevant fields
+  email: string;
 }
 
 function extractTime(date: string) {
@@ -60,48 +57,6 @@ function extractDate(date: string) {
   });
 }
 
-function volunteer(id: string) {
-  fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/volunteer/${id}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: id,
-    }),
-  })
-    .then((res) => {
-      if (!res.ok) {
-        return Promise.reject();
-      }
-      return res.json();
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-}
-
-function register(id: string) {
-  fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/register/${id}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: id,
-    }),
-  })
-    .then((res) => {
-      if (!res.ok) {
-        return Promise.reject();
-      }
-      return res.json();
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-}
-
 export default function DrawerDialogDemo({
   event,
   UserRole,
@@ -115,36 +70,117 @@ export default function DrawerDialogDemo({
   const [ParticipantList, setParticipantList] = React.useState<Participant[]>(
     []
   );
+  const [isOrganizer, setIsOrganizer] = React.useState(false);
+  const [isVolunteer, setIsVolunteer] = React.useState(false);
+  const [isParticipant, setIsParticipant] = React.useState(false);
 
-  React.useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/participants/all/${event.id}`,
-      {
-        method: "GET",
+  function volunteer(id: string) {
+    if (!isVolunteer) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/volunteers/volunteer`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setParticipantList(data.events);
+        body: JSON.stringify({
+          event_id: id,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          setIsVolunteer(true);
+          if (res.status === 409) {
+            alert("You are already registered as a participant");
+          }
+          else if (res.status === 406) {
+            alert("Already registered as a volunteer");
+          }
+          return Promise.reject();
+        }
+        return res.json();
+      }).then((data) => {
+        setIsVolunteer(true);
       });
-  }, []);
+    }
+  }
+
+  function register(id: string) {
+    if (!isParticipant) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/events/register/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            setIsParticipant(true);
+            if (res.status === 409) {
+              alert("You are already registered as a volunteer");
+            }
+            else if (res.status === 406) {
+              alert("Already registered as a participant");
+            }
+            return Promise.reject();
+          }
+          return res.json();
+        }).then((data) => {
+          setIsParticipant(true);
+        });
+    }
+  }
+
   React.useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/volunteers/all/${event.id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setParticipantList(data.events);
-      });
-  }, []);
+    if (UserRole === "organizer") {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/events/registrations/${event.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
+        .then((res) => {
+          if (res.ok) {
+            setIsOrganizer(true);
+            return res.json();
+          } else {
+            setIsOrganizer(false);
+            return Promise.reject();
+          }
+        })
+        .then((data) => {
+          setParticipantList(data);
+        });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  React.useEffect(() => {
+    if (UserRole === "organizer") {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/volunteers/all/${event.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            return Promise.reject();
+          }
+        })
+        .then((data) => {
+          console.log(data);
+          setVolunteerList(data);
+        });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
@@ -194,37 +230,44 @@ export default function DrawerDialogDemo({
               {/* <Input id="username" defaultValue="@shadcn" /> */}
             </div>
             {(UserRole === "participant" || UserRole === "student") && (
-              <Button type="submit" onClick={() => register(event.id)}>
+              <Button
+                type="button"
+                onClick={() => register(event.id)}
+                disabled={isParticipant}
+              >
                 Register
               </Button>
             )}
             {UserRole === "student" && (
-              <Button type="submit" onClick={() => volunteer(event.id)}>
+              <Button
+                type="button"
+                onClick={() => {
+                  volunteer(event.id);
+                }}
+                disabled={isVolunteer}
+              >
                 Volunteer
               </Button>
             )}
 
-            {UserRole === "organizer" && (
+            {isOrganizer && UserRole === "organizer" && (
               <div className="grid gap-2">
                 {!VolunteerList && (
                   //print no empty list
                   <Label htmlFor="username">No volunteers as of now</Label>
                 )}
-                {/* {console.log(VolunteerList);console.log("hey")} */}
                 {VolunteerList && (
                   <>
                     <Label htmlFor="username">Volunteers</Label>
                     <ul>
                       {VolunteerList.map((volunteer) => (
-                        <li>
+                        <li key={volunteer.roll}>
                           {volunteer.name} {volunteer.roll} {volunteer.dept}{" "}
-                          {/*add relevant fields*/}
                         </li>
                       ))}
                     </ul>
                   </>
                 )}
-
                 {!ParticipantList && (
                   //print no empty list
                   <Label htmlFor="username">No participants as of now</Label>
@@ -235,9 +278,8 @@ export default function DrawerDialogDemo({
                     <Label htmlFor="username">Participants</Label>
                     <ul>
                       {ParticipantList.map((participant) => (
-                        <li>
-                          {participant.name} {participant.roll}{" "}
-                          {participant.dept}
+                        <li key={participant.email}>
+                          {participant.name} {participant.email}{" "}
                         </li>
                       ))}
                     </ul>
@@ -299,30 +341,43 @@ export default function DrawerDialogDemo({
           </div>
 
           {(UserRole === "participant" || UserRole === "student") && (
-            <Button type="submit" onClick={() => register(event.id)}>
+            <Button
+              type="button"
+              onClick={() => register(event.id)}
+              disabled={isParticipant}
+            >
               Register
             </Button>
           )}
           {UserRole === "student" && (
-            <Button type="submit" onClick={() => register(event.id)}>
+            <Button
+              type="button"
+              onClick={() => {
+                volunteer(event.id);
+              }}
+              disabled={isVolunteer}
+            >
               Volunteer
             </Button>
           )}
-          {UserRole === "organizer" && (
+          {isOrganizer && UserRole === "organizer" && (
             <div className="grid gap-2">
               {!VolunteerList && (
                 //print no empty list
                 <Label htmlFor="username">No volunteers as of now</Label>
               )}
               {/* {console.log(VolunteerList);console.log("hey")} */}
+              {!VolunteerList && (
+                //print no empty list
+                <Label htmlFor="username">No volunteers as of now</Label>
+              )}
               {VolunteerList && (
                 <>
                   <Label htmlFor="username">Volunteers</Label>
                   <ul>
                     {VolunteerList.map((volunteer) => (
-                      <li>
+                      <li key={volunteer.roll}>
                         {volunteer.name} {volunteer.roll} {volunteer.dept}{" "}
-                        {/*add relevant fields*/}
                       </li>
                     ))}
                   </ul>
@@ -339,8 +394,8 @@ export default function DrawerDialogDemo({
                   <Label htmlFor="username">Participants</Label>
                   <ul>
                     {ParticipantList.map((participant) => (
-                      <li>
-                        {participant.name} {participant.roll} {participant.dept}
+                      <li key={participant.email}>
+                        {participant.name} {participant.email}
                       </li>
                     ))}
                   </ul>

@@ -3,8 +3,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import deps
-from app.models import Event, Participant, User, Registration
-from app.schemas.responses import EventListResponse, List, EventSchema
+from app.models import Event, Manage, Participant, User, Registration
+from app.schemas.responses import (
+    EventListResponse,
+    List,
+    EventSchema,
+    RegistrationResponse,
+)
 from app.schemas.requests import EventChangeRequest, BaseUser
 
 
@@ -55,20 +60,32 @@ async def read_students(
             status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
         )
 
-    existing_registration = await session.execute(
-        select(Registration).filter(
-            Registration.event_id == event_id, Registration.user_id == current_user.id
+    try:
+        existing_registration = await session.execute(
+            select(Registration).filter(
+                Registration.event_id == event_id,
+                Registration.user_id == current_user.id,
+            )
         )
-    )
-    existing_registration = existing_registration.scalar_one()
-    if existing_registration is not None:
-        raise HTTPException(
-            status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Already registered"
-        )
+        existing_registration = existing_registration.scalar_one()
+        if existing_registration:
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Already registered for the event",
+            )
+    except Exception as e:
+        print(e)
 
-    registration = Registration(event_id=event_id, user_id=current_user.id)
-    session.add(registration)
-    await session.commit()
+    try:
+        registration = Registration(event_id=event_id, user_id=current_user.id)
+        session.add(registration)
+        await session.commit()
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Already registered as Volunteer",
+        )
     return
 
 
@@ -126,3 +143,48 @@ async def update_event(
         time=event.time,
         venue=event.venue,
     )
+
+
+@router.get(
+    "/registrations/{event_id}",
+    response_model=List[RegistrationResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def list_registrations(
+    event_id: str,
+    current_user: BaseUser = Depends(deps.get_current_user),
+    session: AsyncSession = Depends(deps.get_session),
+):
+    """List all registrations for an event"""
+    organizers = await session.execute(
+        select(Manage).filter(Manage.event_id == event_id)
+    )
+    organizers = organizers.scalars().all()
+    if current_user.role == "admin" or (
+        current_user.role == "organizer"
+        and current_user.id in [organizer.id for organizer in organizers]
+    ):
+        result = await session.execute(
+            select(Registration).filter(Registration.event_id == event_id)
+        )
+        registrations = result.scalars().all()
+        all_registrations: List[RegistrationResponse] = []
+        for registration in registrations:
+            user = await session.execute(
+                select(User).filter(User.id == registration.user_id)
+            )
+            user = user.scalar_one()
+            if user is None:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Inconsistent data",
+                )
+            all_registrations.append(
+                RegistrationResponse(name=user.name, email=user.email)
+            )
+
+        return all_registrations
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
+        )

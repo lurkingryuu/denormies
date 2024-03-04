@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import deps
 from app.models import Accomodation, Manage, Mess, Participant
-from app.schemas.responses import ParticipantResponse
+from app.schemas.responses import MiniParticipantResponse, ParticipantResponse
 from app.schemas.requests import BaseUser, ParticipantCreateRequest
 
 
@@ -127,7 +127,7 @@ async def read_participant_me(
 # ----------------- Restricted -----------------
 @router.get(
     "/all/{event_id}",
-    response_model=list[ParticipantResponse],
+    response_model=list[MiniParticipantResponse],
     status_code=status.HTTP_200_OK,
 )
 async def list_participants(
@@ -150,7 +150,7 @@ async def list_participants(
     
     result = await session.execute(select(Participant))
     participants = result.scalars().all()
-    all_participants: list[ParticipantResponse] = []
+    all_participants: list[MiniParticipantResponse] = []
     for participant in participants:
         user = await session.execute(
             select(BaseUser).filter(BaseUser.id == participant.id)
@@ -187,13 +187,10 @@ async def list_participants(
                 )
 
         all_participants.append(
-            ParticipantResponse(
+            MiniParticipantResponse(
                 name=user.name,
                 email=user.email,
-                phone=user.phone if user.phone else "",
-                university=participant.university,
-                accomodation=accomodation.name if accomodation else "No accomodation",
-                mess=mess.name if mess else "No mess",
+                university=participant.university
             )
         )
     return all_participants

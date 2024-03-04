@@ -27,8 +27,16 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
-import { set } from "react-hook-form";
-
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 export interface Event {
   id: string;
   name: string;
@@ -92,21 +100,22 @@ export default function DrawerDialogDemo({
         body: JSON.stringify({
           event_id: id,
         }),
-      }).then((res) => {
-        if (!res.ok) {
+      })
+        .then((res) => {
+          if (!res.ok) {
+            setIsVolunteer(true);
+            if (res.status === 409) {
+              alert("You are already registered as a participant");
+            } else if (res.status === 406) {
+              alert("Already registered as a volunteer");
+            }
+            return Promise.reject();
+          }
+          return res.json();
+        })
+        .then((data) => {
           setIsVolunteer(true);
-          if (res.status === 409) {
-            alert("You are already registered as a participant");
-          }
-          else if (res.status === 406) {
-            alert("Already registered as a volunteer");
-          }
-          return Promise.reject();
-        }
-        return res.json();
-      }).then((data) => {
-        setIsVolunteer(true);
-      });
+        });
     }
   }
 
@@ -124,14 +133,14 @@ export default function DrawerDialogDemo({
             setIsParticipant(true);
             if (res.status === 409) {
               alert("You are already registered as a volunteer");
-            }
-            else if (res.status === 406) {
+            } else if (res.status === 406) {
               alert("Already registered as a participant");
             }
             return Promise.reject();
           }
           return res.json();
-        }).then((data) => {
+        })
+        .then((data) => {
           setIsParticipant(true);
         });
     }
@@ -230,7 +239,9 @@ export default function DrawerDialogDemo({
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="font-bold text-xl">{event.name}</DialogTitle>
+            <DialogTitle className="font-bold text-xl">
+              {event.name}
+            </DialogTitle>
             <DialogDescription>{event.desc}</DialogDescription>
           </DialogHeader>
           <form className="grid items-start gap-4">
@@ -274,15 +285,52 @@ export default function DrawerDialogDemo({
                 Volunteer
               </Button>
             )}
-
             {isOrganizer && UserRole === "organizer" && (
               <div className="grid gap-2">
-                {!VolunteerList && (
+                {VolunteerList.length == 0 && (
                   //print no empty list
-                  <Label htmlFor="username">No volunteers as of now</Label>
+                  <Label
+                    htmlFor="username"
+                    className="text-sm font-semibold py-2"
+                  >
+                    No volunteers in this event as of now
+                  </Label>
                 )}
-                {VolunteerList && (
+                {VolunteerList.length != 0 && (
                   <>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[100px]">Name</TableHead>
+                          <TableHead>Roll</TableHead>
+                          <TableHead>Department</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {VolunteerList.map((volunteer) => (
+                          <TableRow key={volunteer.roll}>
+                            <TableCell className="font-medium">
+                              {volunteer.name}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {volunteer.roll}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {volunteer.dept}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                      <TableFooter>
+                        <TableRow>
+                          <TableCell colSpan={3}>Total</TableCell>
+                          <TableCell className="text-right">
+                            {VolunteerList.length}
+                          </TableCell>
+                        </TableRow>
+                      </TableFooter>
+                    </Table>
+
                     <Label htmlFor="username">Volunteers</Label>
                     <ul>
                       {VolunteerList.map((volunteer) => (
@@ -293,18 +341,46 @@ export default function DrawerDialogDemo({
                     </ul>
                   </>
                 )}
-                {!ParticipantList && (
+                {ParticipantList.length == 0 && (
                   //print no empty list
                   <Label htmlFor="username">No participants as of now</Label>
                 )}
-                {ParticipantList && (
+                {ParticipantList.length != 0 && (
                   <>
-                    {" "}
-                    <Label htmlFor="username">Participants</Label>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[100px]">Name</TableHead>
+                          <TableHead>Email</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {ParticipantList.map((participant) => (
+                          <TableRow key={participant.name}>
+                            <TableCell className="font-medium">
+                              {participant.name}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {participant.email}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                      <TableFooter>
+                        <TableRow>
+                          <TableCell colSpan={3}>Total</TableCell>
+                          <TableCell className="text-right">
+                            {ParticipantList.length}
+                          </TableCell>
+                        </TableRow>
+                      </TableFooter>
+                    </Table>
+
+                    <Label htmlFor="username">Volunteers</Label>
                     <ul>
-                      {ParticipantList.map((participant) => (
-                        <li key={participant.email}>
-                          {participant.name} {participant.email}{" "}
+                      {VolunteerList.map((volunteer) => (
+                        <li key={volunteer.roll}>
+                          {volunteer.name} {volunteer.roll} {volunteer.dept}{" "}
                         </li>
                       ))}
                     </ul>
@@ -431,7 +507,7 @@ export default function DrawerDialogDemo({
                 //print no empty list
                 <Label htmlFor="username">No participants as of now</Label>
               )}
-              {ParticipantList && (
+              {/* {ParticipantList && (
                 <>
                   {" "}
                   <Label htmlFor="username">Participants</Label>
@@ -443,7 +519,7 @@ export default function DrawerDialogDemo({
                     ))}
                   </ul>
                 </>
-              )}
+              )} */}
             </div>
           )}
         </form>

@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -288,16 +289,20 @@ export default function DrawerDialogDemo({
             {isOrganizer && UserRole === "organizer" && (
               <div className="grid gap-2">
                 {VolunteerList.length == 0 && (
-                  //print no empty list
-                  <Label
-                    htmlFor="username"
-                    className="text-sm font-semibold py-2"
-                  >
-                    No volunteers in this event as of now
-                  </Label>
+                  <>
+                    <Separator />
+                    <Label
+                      htmlFor="username"
+                      className="text-sm font-semibold py-2"
+                    >
+                      No volunteers in this event as of now
+                    </Label>
+                  </>
                 )}
                 {VolunteerList.length != 0 && (
                   <>
+                    <Separator />
+                    <Label htmlFor="username">Volunteers</Label>
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -330,23 +335,19 @@ export default function DrawerDialogDemo({
                         </TableRow>
                       </TableFooter>
                     </Table>
-
-                    <Label htmlFor="username">Volunteers</Label>
-                    <ul>
-                      {VolunteerList.map((volunteer) => (
-                        <li key={volunteer.roll}>
-                          {volunteer.name} {volunteer.roll} {volunteer.dept}{" "}
-                        </li>
-                      ))}
-                    </ul>
                   </>
                 )}
                 {ParticipantList.length == 0 && (
                   //print no empty list
-                  <Label htmlFor="username">No participants as of now</Label>
+                  <>
+                    <Separator />
+                    <Label htmlFor="username">No participants as of now</Label>
+                  </>
                 )}
                 {ParticipantList.length != 0 && (
                   <>
+                    <Separator />
+                    <Label htmlFor="username">Participants</Label>
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -375,15 +376,6 @@ export default function DrawerDialogDemo({
                         </TableRow>
                       </TableFooter>
                     </Table>
-
-                    <Label htmlFor="username">Volunteers</Label>
-                    <ul>
-                      {VolunteerList.map((volunteer) => (
-                        <li key={volunteer.roll}>
-                          {volunteer.name} {volunteer.roll} {volunteer.dept}{" "}
-                        </li>
-                      ))}
-                    </ul>
                   </>
                 )}
               </div>
@@ -481,45 +473,96 @@ export default function DrawerDialogDemo({
           )}
           {isOrganizer && UserRole === "organizer" && (
             <div className="grid gap-2">
-              {!VolunteerList && (
-                //print no empty list
-                <Label htmlFor="username">No volunteers as of now</Label>
-              )}
-              {/* {console.log(VolunteerList);console.log("hey")} */}
-              {!VolunteerList && (
-                //print no empty list
-                <Label htmlFor="username">No volunteers as of now</Label>
-              )}
-              {VolunteerList && (
+              {VolunteerList.length == 0 && (
                 <>
+                  <Separator />
+                  <Label
+                    htmlFor="username"
+                    className="text-sm font-semibold py-2"
+                  >
+                    No volunteers in this event as of now
+                  </Label>
+                </>
+              )}
+              {VolunteerList.length != 0 && (
+                <>
+                  <Separator />
                   <Label htmlFor="username">Volunteers</Label>
-                  <ul>
-                    {VolunteerList.map((volunteer) => (
-                      <li key={volunteer.roll}>
-                        {volunteer.name} {volunteer.roll} {volunteer.dept}{" "}
-                      </li>
-                    ))}
-                  </ul>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[100px]">Name</TableHead>
+                        <TableHead>Roll</TableHead>
+                        <TableHead>Department</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {VolunteerList.map((volunteer) => (
+                        <TableRow key={volunteer.roll}>
+                          <TableCell className="font-medium">
+                            {volunteer.name}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {volunteer.roll}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {volunteer.dept}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell colSpan={3}>Total</TableCell>
+                        <TableCell className="text-right">
+                          {VolunteerList.length}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
                 </>
               )}
-
-              {!ParticipantList && (
+              {ParticipantList.length == 0 && (
                 //print no empty list
-                <Label htmlFor="username">No participants as of now</Label>
-              )}
-              {/* {ParticipantList && (
                 <>
-                  {" "}
-                  <Label htmlFor="username">Participants</Label>
-                  <ul>
-                    {ParticipantList.map((participant) => (
-                      <li key={participant.email}>
-                        {participant.name} {participant.email}
-                      </li>
-                    ))}
-                  </ul>
+                  <Separator />
+                  <Label htmlFor="username">No participants as of now</Label>
                 </>
-              )} */}
+              )}
+              {ParticipantList.length != 0 && (
+                <>
+                  <Separator />
+                  <Label htmlFor="username">Participants</Label>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[100px]">Name</TableHead>
+                        <TableHead>Email</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {ParticipantList.map((participant) => (
+                        <TableRow key={participant.name}>
+                          <TableCell className="font-medium">
+                            {participant.name}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {participant.email}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell colSpan={3}>Total</TableCell>
+                        <TableCell className="text-right">
+                          {ParticipantList.length}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </>
+              )}
             </div>
           )}
         </form>

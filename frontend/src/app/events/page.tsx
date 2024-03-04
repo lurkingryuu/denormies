@@ -41,7 +41,7 @@ export default function CarouselPlugin() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setEventList([data.events[0]]);
+        setEventList(data.events);
       });
   }, []);
 

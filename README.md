@@ -47,47 +47,6 @@ The system is required to support the following workflow:
 
 ---
 
-## Plan Of Action (POA)
-
-> [!NOTE]
-> Note down every resource you are referring
-
-- [x] Remake The ER Diagram for this Particular Use Case
-  - [x] Go through all of our assignments 2.
-  - [x] Must include:
-    - [x] External Participants
-    - [x] Student
-    - [x] Volunteers (Students can be volunteers)
-    - [x] Organizer (not student)
-    - [x] Events
-    - [x] Event winners
-    - [x] Registration for events
-    - [x] Student as Participant or Volunteer
-- [x] Decide Tech Stack
-  - [x] PostgreSQL
-  - [x] NextJS
-  - [ ] Psycopg
-  - [ ] Fastapi or Flask
-- [x] Explore Triggers in Postgresql (in Parallel)
-- [ ] Create Relational Schema
-  - [ ] Properly deciding the Constraints
-  - [ ] Note down every command in an SQL File, Need a final file to create the Database in One go
-- [ ] Coding Phase
-  - [ ] Frontend
-    - [ ] Basic Frontend with full functionality
-    - [ ] Design phase
-  - [ ] Backend
-    - [ ] Follow MVC Architecture
-    - [ ] According to the requirements of Frontend, Create REST API
-  - [ ] Database Triggers
-- [ ] Report
-  - [ ] Not every resource you are referring to when learning something
-  - [ ] All the design decisions must be written down to include in the report
-- [ ] Hosting
-  - [ ] This is a must, not that it will take much time, but we need to have a working model ready 1 day before
-
----
-
 ## Resources:
 
 - <https://github.com/rafsaf/minimal-fastapi-postgres-template/tree/main?tab=readme-ov-file>
@@ -110,12 +69,3 @@ The system is required to support the following workflow:
 - [./backend/app/api/api.py](./backend/app/api/api.py) - Contains the APIRouter, needs to be updated for every new endpoints file you create
 
 Go to [Guide](https://github.com/rafsaf/minimal-fastapi-postgres-template/tree/main?tab=readme-ov-file#minimal-async-fastapi--postgresql-template) To get an overview of setup and usage of this backend
-
----
-## Frontend
-
-### Login - /auth
-![login](./assets/login.png)
-
-### Signup Page - /auth
-![signup](./assets/signup.png)
